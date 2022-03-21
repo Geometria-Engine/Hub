@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef EMPTY_H
+#define EMPTY_H
+
 #ifndef BEHAVIOUR_H
 #include "Behaviour.h"
 #endif
@@ -17,3 +20,5 @@ struct Empty : public ScriptBehaviour
 		ClassType = Class::Object;
 	}
 };
+
+#endif

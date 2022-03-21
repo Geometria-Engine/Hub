@@ -1,0 +1,38 @@
+<main-style src="Game/UI/main.css" />
+<guiml type="App" class="Main">
+	<div class="Body">
+		<div class="Options">
+			<div class="Options-Content">
+				<p class="Options-Title">Projects</p>
+				<p class="empty"></p>
+				<button class="opt-button">Open</button>
+				<p class="empty"></p>
+				<button class="opt-button">Create</button>
+			</div>
+		</div>
+		<cont />
+		<div class="Results">
+			<div class="Create">
+				<p class="Options-Title">Create New Project:</p>
+				<p class="big-empty"></p>
+				<input class="Options-Input" name="Project Name" broadcast="true" />
+				<input class="Options-Input" name="Directory" broadcast="true" />
+				<button class="opt-button">Examine...</button>
+				<p class="big-empty"></p>
+				<p class="big-empty"></p>
+				<button class="opt-button" onclick="broadcast('--hub-create {Project Name}|{Directory}')">Create...</button>
+			</div>
+		</div>
+	</div>
+	<div class="Logo"></div>
+	<div class="Loading">
+		<p class="Status" name="Status">Creating "Sex 3"...</p>
+		<div class="InstallBox">
+			<button class="download-btn" name="GitButton">Download Git</button>
+			<button class="download-btn" name="VSBuildToolsButton">Download VS C++ Build Tools</button>
+		</div>
+	</div>
+	<div class="TopRightOptions">
+		<button class="close" name="CloseBtn"></button>
+	</div>
+</guiml>

@@ -1,7 +1,13 @@
 #pragma once
 
+#ifndef CAMERA_H
+#define CAMERA_H
+
 #include "../MainAPI/Graphics.h"
 #include "../../../Behaviours/Behaviour.h"
+
+#undef near
+#undef far
 
 class Camera : public ScriptBehaviour
 {
@@ -74,3 +80,5 @@ public:
 	void Mouse();
 	void MoveDirection(const int direction);
 };
+
+#endif

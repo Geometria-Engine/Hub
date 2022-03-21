@@ -1,3 +1,6 @@
+#ifndef COMPILER_H
+#define COMPILER_H
+
 #include <string>
 #include <experimental/filesystem>
 #include <vector>
@@ -33,3 +36,5 @@ public:
 
 	std::string ModifyCommandLine(std::string c);
 };
+
+#endif

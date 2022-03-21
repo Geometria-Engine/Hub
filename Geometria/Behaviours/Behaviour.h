@@ -169,6 +169,7 @@ if(ClassType != Class::Script)\
 struct ScriptBehaviour
 {
 	bool isEditor = false;
+	bool isUniversal = false;
 
 	bool _dontStore = false;
 	bool hasOwner = false;
@@ -217,13 +218,13 @@ struct ScriptBehaviour
 
 	ScriptBehaviour() 
 	{
-		objectClassName.clear();
+		//objectClassName.clear();
 		this->AddMyselfToHierarchy();
 	}
 
 	ScriptBehaviour(bool add)
 	{
-		objectClassName.clear();
+		//objectClassName.clear();
 		if (add) { this->AddMyselfToHierarchy(); }
 	}
 
@@ -309,6 +310,8 @@ struct ScriptBehaviour
 	template <typename T>
 	T* AddScript()
 	{
+		std::cout << "Adding New Script..." << std::endl;
+
 		T* script = new T();
 
 		if (Application::_engineState == Application::State::Game)

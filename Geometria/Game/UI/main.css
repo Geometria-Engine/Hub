@@ -1,0 +1,238 @@
+@font-face
+{
+	src: "Game/Fonts/Raleway-Light.ttf";
+	font-family: "Raleway";
+}
+
+@font-face
+{
+	src: "Game/Fonts/Raleway-Bold.ttf";
+	font-family: "Raleway Bold";
+}
+
+@font-face
+{
+	src: "Game/Fonts/Raleway-Italic.ttf";
+	font-family: "Raleway Italic";
+}
+
+.Main
+{
+	padding-x: 0px;
+	padding-y: 0px;
+	border-width: 0px;
+	background-image: "Game/Textures/main-background-with-blur.png";
+	background-color: rgb(0, 0, 0);
+
+	animation: begin(70) | 
+	new-frame(1s, 1s) | 
+	add-value(background-color = rgb[1, 1, 1]);
+
+}
+
+.Logo
+{
+	width: 463px;
+	height: 351px;
+	padding-x: 0px;
+	padding-y: 0px;
+	border-width: 0px;
+	background-image: "Game/Textures/logo2.png";
+	background-color: rgb(0, 0, 0, 0);
+	align: center;
+	position: absolute;
+	animation: begin(70) | 
+	new-frame(0, 3s, Quintic) | 
+	add-value(width = 563px) |
+	add-value(height = 451px) |
+	add-value(background-color = rgb[1, 1, 1, 1]) |
+	new-frame(2.5s, 2s, Quintic) |
+	add-value(align = 1% 1%) |
+	add-value(width = 56px) |
+	add-value(height = 56px) |
+}
+
+.TopRightOptions
+{
+	position: absolute;
+	width: 56px;
+	height: 56px;
+	padding-x: 0px;
+	padding-y: 0px;
+	border-width: 0px;
+	align: top-right;
+	background-color: rgb(0, 0, 0, 0);
+}
+
+.close
+{
+	width: 56px;
+	height: 56px;
+	background-image: "Game/Textures/close.png";
+	background-color: rgb(1, 1, 1, 1);
+}
+
+.minimize
+{
+	width: 56px;
+	height: 56px;
+	background-image: "Game/Textures/minimize.png";
+	background-color: rgb(1, 1, 1, 1);
+}
+
+.Body
+{
+	width: 80vw;
+	height: 80vh;
+	padding-x: 0px;
+	padding-y: 0px;
+	border-width: 0px;
+	position: absolute;
+	align: center;
+	background-color: rgb(0, 0, 0, 0.2);
+	animation: begin(70) | new-frame(0, 1) | --move(0 100) | new-frame(2.5s, 2s, Quintic) | --move(0 0);
+}
+
+.Options
+{
+	width: 20vw;
+	height: 100vh;
+	padding-x: 0px;
+	padding-y: 0px;
+	border-width: 0px;
+	position: absolute;
+	align: left;
+	background-color: rgb(0, 0, 0, 0);
+}
+
+.Results
+{
+	width: 80vw;
+	height: 100vh;
+	padding-x: 0px;
+	padding-y: 0px;
+	border-width: 0px;
+	position: absolute;
+	align: right;
+	background-color: rgb(0, 0, 0, 0);
+}
+
+.Options-Content
+{
+	font-family: "Raleway Bold";
+	font-size: 40px;
+	width: 60vw;
+	height: 50vh;
+	padding-x: 0px;
+	padding-y: 0px;
+	border-width: 0px;
+	position: absolute;
+	align: center;
+}
+
+.opt-button
+{
+	background-color: rgba(0, 0, 0, 0.2);
+	onhover: add-value(background-color = rgb[0, 0, 0, 0.5]);
+	onhoverup: add-value(background-color = rgb[0, 0, 0, 0.2]);
+}
+
+.empty
+{
+	font-family: "Raleway Bold";
+	font-size: 20px;
+}
+
+.big-empty
+{
+	font-family: "Raleway Bold";
+	font-size: 40px;
+}
+
+.Options-Title
+{
+	font-family: "Raleway Italic";
+	font-size: 30px;
+}
+
+.Create
+{
+	width: 80vw;
+	height: 80vh;
+	padding-x: 0px;
+	padding-y: 0px;
+	border-width: 0px;
+	position: absolute;
+	align: center;
+	background-color: rgb(0, 0, 0, 0);
+}
+
+.Options-Input
+{
+	font-family: "Raleway";
+	font-size: 30px;
+	background-color: rgb(0, 0, 0, 0.2);
+}
+
+.Loading
+{
+	width: 100vw;
+	height: 100vh;
+	padding-x: 0px;
+	padding-y: 0px;
+	border-width: 0px;
+	background-color: rgb(0, 0, 0, 0.6);
+	animation: --move(0 100);
+	position: absolute;
+	align: center;
+
+	broadcast[--hub-creating]: begin(70) | new-frame(0, 0.5s, QuinticOut) | --move(0 0);
+	broadcast[--hub-install-quit]: begin(70) | new-frame(0, 0.5s, QuinticOut) | --move(0 100);
+}
+
+.Status
+{
+	font-family: "Raleway";
+	font-size: 40px;
+	position: absolute;
+	align: center;
+}
+
+.InstallBox
+{
+	width: 50vw;
+	height: 100px;
+	padding-x: 0px;
+	padding-y: 0px;
+	border-width: 0px;
+	background-color: rgb(0, 0, 0, 0);
+	position: absolute;
+	align: 50% 80%;
+	animation: --move(0 -100);
+	broadcast[install-box]: --move(0 0);
+	broadcast[install-box-back]: --move(0 -100);
+}
+
+.download-btn
+{
+	background-color: rgba(1, 1, 1, 1);
+	onhover: add-value(background-color = rgb[1, 1, 1, 0.8]);
+	onhoverup: add-value(background-color = rgb[1, 1, 1, 1]);
+	color: rgb(0, 0, 0, 1);
+}
+
+.yes
+{
+	font-family: "Raleway";
+	font-size: 40px;
+	color: rgb(0, 1, 0);
+	align: left;
+}
+
+.no
+{
+	font-family: "Raleway";
+	font-size: 40px;
+	color: rgb(1, 0, 0);
+	align: right;
+}

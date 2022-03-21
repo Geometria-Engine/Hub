@@ -1,8 +1,8 @@
-workspace "Geometria"
+workspace "Hub"
 	staticruntime "on"
 	configurations { "Release" }
 	platforms { "x86_64", "x86" }
-	startproject "Geometria"
+	startproject "Hub"
 	warnings "off"
 
 IncludeDirectories = {}
@@ -26,18 +26,18 @@ include "Libraries/ZLIB"
 IncludeDirectories["ZLIB"] = "Libraries/ZLIB"
 
 
-project "Geometria"
+project "Hub"
 	kind "ConsoleApp"
 	language "C++"
-	location "%{prj.name}"
-	targetdir "%{prj.name}"
+	location "Geometria"
+	targetdir "Geometria"
 
 	files 
 	{ 
-		"%{prj.name}/**.h", 
-		"%{prj.name}/**.c",
-		"%{prj.name}/**.hpp", 
-		"%{prj.name}/**.cpp"
+		"Geometria/**.h", 
+		"Geometria/**.c",
+		"Geometria/**.hpp", 
+		"Geometria/**.cpp"
 	}
 
 	includedirs

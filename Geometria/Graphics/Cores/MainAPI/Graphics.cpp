@@ -3,10 +3,7 @@
 #include <chrono>
 #include <thread>
 
-#ifdef _WIN32
-#include <windows.h>
-#undef CreateWindow
-#endif
+#include "../../Externals/DragBorderlessWindow.h"
 
 //==[STATIC VARIABLES]==//
 
@@ -16,6 +13,7 @@ int Window::width;
 int Window::height;
 float Graphics::_lastDeltaTime;
 int Graphics::_oGLDepthFunction;
+Empty* Graphics::_drawBorderlessWindowManager = nullptr;
 
 //======================//
 
@@ -191,6 +189,12 @@ void Graphics::SetResizeCall()
 		glfwSetWindowSizeCallback(_currentWindow.openGLWindow, _currentWindow.ResizeWindow);
 		glfwSetFramebufferSizeCallback(_currentWindow.openGLWindow, _currentWindow.ResizeWindow);
 	}
+}
+
+void Graphics::EnableDraggableBorderless()
+{
+	_drawBorderlessWindowManager = new Empty();
+	_drawBorderlessWindowManager->AddScript<DragBorderlessWindow>();
 }
 
 

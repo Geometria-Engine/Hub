@@ -4,31 +4,135 @@
 #include "Physics/PhysicsManager.h"
 #include "Physics/Rigidbody/Rigidbody.h"
 #include "Physics/Colliders/BoxCollider.h"
+#include "Game/Scripts/HubManager.h"
 
 //Original name: Chingatumadre Engine
 
 static std::vector<Model*> models;
 bool firstFrame = true, secondFrame = true;
+bool HubManager::creating = false, HubManager::isGitThreadSpawned = false, HubManager::isGitFinished = false, HubManager::isProjectCreationFinished = false, HubManager::isFromCommandLine = false;
+std::string HubManager::currentUrl, HubManager::currentProjectName;
+
+bool HubManager::defaultValuesAdded = false;
+ImGUIElement* HubManager::win;
+ImGUIElement* HubManager::status;
+
+void Main_Compile()
+{
+    if (Application::IsPlatform(Application::Windows))
+    {
+        std::string getMSBuild = Files::GetPathFromCommand(Files::ConvertToWindowsCmdPath("C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe") + " -latest -prerelease -products * -requires Microsoft.Component.MSBuild -find MSBuild/**/Bin/MSBuild.exe");
+        if (getMSBuild != "")
+        {
+            system(Files::ConvertToWindowsCmdPath(getMSBuild).c_str());
+            std::cout << "Project Compiled!" << std::endl;
+        }
+    }
+}
+
 int main(int argc, char** argv)
 {
-    Graphics::Init();
-    Graphics::CreateWindow(640, 480, "Yooooooooooooooo");
-
-    Graphics::Start();
-
     for (int i = 0; i < argc; i++)
     {
         std::string commandLine = argv[i];
         if (commandLine == "--bypass-intel")
-        {
             Graphics::BypassIntel(true);
+        else if (commandLine == "--compile")
+        {
+            std::cout << "Compiling..." << std::endl;
+            Main_Compile();
+            exit(0);
+        }
+        else if(commandLine == "--path-compiler")
+        {
+            if (Application::IsPlatform(Application::Windows))
+                std::cout << Files::GetPathFromCommand(Files::ConvertToWindowsCmdPath("C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe") + " -latest -prerelease -products * -requires Microsoft.Component.MSBuild -find MSBuild/**/Bin/MSBuild.exe") << std::endl;
+
+            exit(0);
+        }
+        else if(commandLine == "--run")
+        {
+            std::cout << "Running..." << std::endl;
+            Main_Compile();
+            Files::ChangeCurrentDirectory("Geometria");
+            Files::OpenProgram("Geometria.exe");
+            exit(0);
+        }
+        else if(commandLine == "--update-engine")
+        {
+            std::string message;
+            std::cout << "WARNING: Updating to the latest version can cause engine modifications you made be overwritten\n";
+            std::cout << "(make sure you have a backup if you're going to do this).\n";
+            std::cout << "If you're sure you want to do this. Type \"Yes, i perfectly know what i'm doing\"\n";
+            std::cout << "Otherwise, type anything but that command to cancel.\n";
+            std::getline(std::cin, message);
+
+            if(message == "Yes, i perfectly know what i'm doing")
+            {
+                std::cout << "Updating Geometria Engine...\n";
+                system("git stash");
+                system("git pull --force");
+                system("git stash pop");
+                std::cout << "Geometria Engine is now up to date!\n";
+                HubManager::ChangeCurrentURL(std::experimental::filesystem::current_path().u8string());
+                HubManager::ChangeCurrentProjectName(std::experimental::filesystem::current_path().filename().u8string());
+                HubManager::SetUpProject();
+            }
+            else
+                std::cout << "Canceling Geometria Engine Update...\n";
+
+            exit(0);
+        }
+        else if(commandLine == "--create")
+        {
+            HubManager::isFromCommandLine = true;
+
+            if(i + 1 < argc)
+            {
+                std::string projectName, url;
+                projectName = argv[i + 1];
+
+                if(i + 2 < argc)
+                    url = argv[i + 2];
+                else
+                {
+                    url = std::experimental::filesystem::current_path().u8string();
+                    std::cout << "No path added, making project in current directory..." << std::endl;
+                }
+
+                GDT_WATCHPOINT_INIT();
+
+                GDT_WATCHPOINT_START();
+                HubManager::CreateProject(projectName, url);
+                GDT_WATCHPOINT_END();
+                std::cout << "Project Folder Created! Downloading from GitHub repository..." << std::endl;
+                HubManager::GitClone();
+                std::cout << "Finished Downloading!" << std::endl;
+                std::cout << "Setting Up Project..." << std::endl;
+                HubManager::SetUpProject();
+            }
+            else
+            {
+                std::cout << "Not enough arguments...\n";
+            }
+
+            exit(0);
         }
     }
+
+    std::string gamefolder = std::experimental::filesystem::current_path().u8string() + "/Game";
+    if(!Files::DirectoryExists(gamefolder.c_str()))
+        exit(0);
 
     if (Graphics::IsIntelGPUBypassed())
     {
         std::cout << "Intel GPU Bypassed!" << std::endl;
     }
+
+    Graphics::Init();
+    Graphics::CreateWindow(640, 480, "Yooooooooooooooo");
+
+    Graphics::Start();
 
     Application::Start();
 
