@@ -5,6 +5,7 @@
 #include "Physics/Rigidbody/Rigidbody.h"
 #include "Physics/Colliders/BoxCollider.h"
 #include "Game/Scripts/HubManager.h"
+#include "Game/Scripts/DynamicLinker.h"
 
 //Original name: Chingatumadre Engine
 
@@ -21,9 +22,17 @@ void Main_Compile()
 {
     if (Application::IsPlatform(Application::Windows))
     {
+        //TODO: Add dynamic linker.
+
+        //DynamicLinker::Link();
+
         std::string getMSBuild = Files::GetPathFromCommand(Files::ConvertToWindowsCmdPath("C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe") + " -latest -prerelease -products * -requires Microsoft.Component.MSBuild -find MSBuild/**/Bin/MSBuild.exe");
+        std::string visualStudioVersion = Files::GetValueFromCommand(Files::ConvertToWindowsCmdPath("C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe") + " -latest -prerelease -products * -property productLineVersion");
+        std::string premakeCmd = "premake5-windows.exe vs" + visualStudioVersion;
+
         if (getMSBuild != "")
         {
+            system(premakeCmd.c_str());
             system(Files::ConvertToWindowsCmdPath(getMSBuild).c_str());
             std::cout << "Project Compiled!" << std::endl;
         }
