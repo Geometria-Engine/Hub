@@ -1,11 +1,6 @@
 #include "Compiler.h"
-#include "../Files/Files.h"
-#include "../Graphics/Cores/MainAPI/Graphics.h"
-#include <istream>
-#include <iostream>
-#include <string>
 
-bool hasEnding(std::string const& fullString, std::string const& ending) {
+/*bool hasEnding(std::string const& fullString, std::string const& ending) {
 	if (fullString.length() >= ending.length()) {
 		return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
 	}
@@ -156,4 +151,4 @@ std::string Compiler::ModifyCommandLine(std::string c)
 
 	customValues.clear();
 	return change;
-}
+}*/

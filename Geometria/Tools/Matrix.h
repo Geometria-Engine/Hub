@@ -1,16 +1,19 @@
+#ifndef MATRIX_H
+#define MATRIX_H
+
 #include "Vector.h"
 #include <glm/detail/type_vec4.hpp>
 #include <iostream>
 #include <sstream>
 
 struct Matrix {
-	glm::mat4 coreMatrix;
+	glm::highp_mat4 coreMatrix;
 
 	Matrix() { /* C++ la neta como chingas la madre con los constructores vales verga */ }
 	
 	Matrix(const float& A)
 	{
-		coreMatrix = glm::mat4(A);
+		coreMatrix = glm::highp_mat4(A);
 	}
 
 	float& operator()(int x, int y)
@@ -26,7 +29,7 @@ struct Matrix {
 
 	Matrix operator=(const float& A)
 	{
-		coreMatrix = glm::mat4(A);
+		coreMatrix = glm::highp_mat4(A);
 		return *this;
 	}
 
@@ -74,7 +77,7 @@ struct Matrix {
 	}
 
 	Matrix operator/=(const float& A) {
-		coreMatrix /= glm::mat4(A);
+		coreMatrix /= glm::highp_mat4(A);
 		return *this;
 	}
 
@@ -141,7 +144,7 @@ struct Matrix {
 	static Matrix Perspective(float fovY, float aspect, float nearZ, float farZ)
 	{
 		Matrix result;
-		result.coreMatrix = glm::mat4(1.0f);
+		result.coreMatrix = glm::highp_mat4(1.0f);
 		result.coreMatrix = glm::perspective(fovY, aspect, nearZ, farZ);
 		return result;
 	}
@@ -149,8 +152,15 @@ struct Matrix {
 	static Matrix Orthographic(float left, float right, float bottom, float top)
 	{
 		Matrix result;
-		result.coreMatrix = glm::mat4(1.0f);
+		result.coreMatrix = glm::highp_mat4(1.0f);
 		result.coreMatrix = glm::ortho(left, right, bottom, top);
+		return result;
+	}
+
+	static Matrix Inverse(Matrix& matrix)
+	{
+		Matrix result;
+		result.coreMatrix = glm::inverse(matrix.coreMatrix);
 		return result;
 	}
 
@@ -161,8 +171,17 @@ struct Matrix {
 		/*std::cout << eye.x << " " << eye.y << " " << eye.z << std::endl;
 		std::cout << center.x << " " << center.y << " " << center.z << std::endl;
 		std::cout << up.x << " " << up.y << " " << up.z << std::endl;*/
-		result.coreMatrix = glm::mat4(1.0f);
+		result.coreMatrix = glm::highp_mat4(1.0f);
 		result.coreMatrix = glm::lookAt(glm::vec3(eye.x, eye.y, eye.z), glm::vec3(center.x, center.y, center.z), glm::vec3(up.x, up.y, up.z));
 		return result;
 	}
+
+	static Vector3 UnProject(Vector3 v, Matrix projection, Matrix view, Vector4 viewport)
+	{
+		glm::vec3 vec(v.x, v.y, v.z);
+		glm::vec3 res = glm::unProject(vec, view.coreMatrix, projection.coreMatrix, glm::vec4(viewport.x, viewport.y, viewport.z, viewport.w));
+		return Vector3::Normalize(Vector3(res.x, res.y, res.z));
+	}
 };
+
+#endif

@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "Trenchbroom/Trenchbroom.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -35,6 +36,8 @@ struct Files
 	static std::vector<unsigned char> GetImageData(const char* url, int& width, int& height);
 	static bool SaveImage(std::string output, std::vector<unsigned char> data, int width, int height);
 	static bool LoadScene(std::string file);
+
+	static std::vector<float> ReadOBJ(const char* url);
 
 	static int UnZIP(const char* url);
 

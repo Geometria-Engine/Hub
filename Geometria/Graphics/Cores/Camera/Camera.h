@@ -3,8 +3,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "../MainAPI/Graphics.h"
-#include "../../../Behaviours/Behaviour.h"
+#include "geometria.h"
 
 #undef near
 #undef far
@@ -43,17 +42,17 @@ public:
 		return _projectionMatrix;
 	}
 
+	void UpdateViewProjection()
+	{
+		if(!editorModeCamera)
+			ViewMatrix = _projectionMatrix * Matrix::LookAt(transform.position, transform.position + forward, up);
+		else
+			ViewMatrix = _projectionMatrix * Matrix::LookAt(editorPosition, editorPosition + forward, up);
+	}
+
 	inline Matrix GetViewProjection()
 	{
-		Matrix view;
-
-		if(!editorModeCamera)
-			view = _projectionMatrix * Matrix::LookAt(transform.position, transform.position + forward, up);
-		else
-			view = _projectionMatrix * Matrix::LookAt(editorPosition, editorPosition + forward, up);
-
-		UpdateCameraSpace();
-		return view;
+		return ViewMatrix;
 	}
 
 	Vector3 GetCurrentPosition()
@@ -77,6 +76,10 @@ public:
 		return _uiMatrix;
 	}
 
+	Vector3 UnProject(Vector3 v);
+
+	Vector3 GetDirectionFromScreen(Vector2 point);
+	
 	void Mouse();
 	void MoveDirection(const int direction);
 };

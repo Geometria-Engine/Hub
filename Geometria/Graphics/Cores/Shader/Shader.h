@@ -4,6 +4,10 @@
 #include <string>
 #include <unordered_map>
 #include "../../Externals/Model.h"
+#include "../../Externals/MiniShader.h"
+
+#ifndef SHADER_H
+#define SHADER_H
 
 class Shader
 {
@@ -69,3 +73,5 @@ private:
 	void Compilation();
 	void FinalTouches();
 };
+
+#endif

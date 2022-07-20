@@ -6,6 +6,8 @@
 #include <cstdio>
 #include <memory>
 #include "String/StringAPI.h"
+#include <vector>
+#include "DebugTools/DebugTools.h"
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -505,4 +507,99 @@ void Files::ChangeCurrentDirectory(std::string path)
             // TODO: Make it for Linux.
         }
     }
+}
+
+std::vector<float> Files::ReadOBJ(const char* url)
+{
+    std::vector<std::string> lines = Files::ReadAndGetLines(url);
+    std::vector<std::array<float, 4>> currentVertices, resultVertices;
+    std::vector<std::array<int, 4>> currentIndices;
+    std::vector<float> finalResult;
+    bool cancel = false;
+
+    for(auto i : lines)
+    {
+        if(!StringAPI::StartsWith(i, "vn ") && !StringAPI::StartsWith(i, "vt "))
+        {
+            if(StringAPI::StartsWith(i, "v "))
+            {
+                std::string res = StringAPI::RemoveAll(i, "v ");
+                std::vector<std::string> split = StringAPI::SplitIntoVector(res, " ");
+                std::array<float, 4> v;
+                v[3] = 1.0f;
+                for(int vert = 0; vert < split.size(); vert++)
+                {
+                    // Here...
+                    v[vert] = std::stof(split[vert]);
+                    //std::cout << "Vertex: " << v[vert] << std::endl;
+                }
+                //std::cout << "Vertex: " << v[3] << std::endl;
+                currentVertices.push_back(v);
+            }
+            else if(StringAPI::StartsWith(i, "f "))
+            {
+                std::string res = StringAPI::RemoveAll(i, "f ");
+                std::vector<std::string> split = StringAPI::SplitIntoVector(res, " ");
+
+                std::array<int, 4> indices;
+                indices[3] = -1;
+
+                if(split.size() <= 4)
+                {
+                    for(int index = 0; index < split.size(); index++)
+                    {
+                        std::vector<std::string> coords = StringAPI::SplitIntoVector(split[index], "/");
+                        indices[index] = std::stoi(coords[0]) - 1;
+                        //std::cout << "Index: " << indices[index] << std::endl;
+                    }
+        
+                    //std::cout << "indices[3] is " << indices[3] << std::endl;
+                    currentIndices.push_back(indices);
+                }
+                else
+                {
+                    std::cout << "[ERROR]: Shapes in the model that aren't tries or quads are not allowed!\n";
+                    std::cout << "[ERROR]: Cancelling...\n";
+                    cancel = true;
+                }
+            }
+        }
+    }
+
+    if(!cancel)
+    {
+        //std::cout << "Finished getting variables!" << std::endl;
+    
+        for(auto i : currentIndices)
+        {
+            int biggestIndex = 0;
+            for(int count = 0; count < 4; count++)
+            {
+                //std::cout << "Index " << count << " is ";
+                if(i[count] >= biggestIndex)
+                    biggestIndex = i[count];
+    
+                if(i[count] == -1)
+                    i[count] = biggestIndex;
+    
+                //std::cout << i[count] << "\n";
+    
+                resultVertices.push_back(currentVertices[i[count]]);
+            }
+        }
+    
+        //std::cout << "Finished setting final vertices!" << std::endl;
+    
+        for(auto i : resultVertices)
+        {
+            for(int res = 0; res < 4; res++)
+            {
+                finalResult.push_back(i[res]);
+            }
+        }
+    
+        //std::cout << "Done!" << std::endl;
+    }
+
+    return finalResult;
 }

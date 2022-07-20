@@ -22,9 +22,36 @@ struct PhysicsContactListener : public physx::PxSimulationEventCallback
 	void onConstraintBreak(physx::PxConstraintInfo* constraints, physx::PxU32 count) { PX_UNUSED(constraints); PX_UNUSED(count); }
 	void onWake(physx::PxActor** actors, physx::PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
 	void onSleep(physx::PxActor** actors, physx::PxU32 count) { PX_UNUSED(actors); PX_UNUSED(count); }
-	void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count) { PX_UNUSED(pairs); PX_UNUSED(count); }
+	void onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 count);
 	void onAdvance(const physx::PxRigidBody* const*, const physx::PxTransform*, const physx::PxU32) {}
 	void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs);
+};
+
+struct RaycastBuffer
+{
+	Vector3 origin, end, direction;
+	int distance;
+	std::vector<ScriptBehaviour*> hitScripts;
+	bool HittedAnythingExcept(ScriptBehaviour* s)
+	{
+		for(int i = 0; i < hitScripts.size(); i++)
+		{
+			if(hitScripts[i] != s)
+				return true;
+		}
+
+		return false;
+	}
+
+	Vector3 GetPoint(float p)
+	{
+		return Vector3(origin.x + direction.x * p, origin.y + direction.y * p, origin.z + direction.z * p);
+	}
+
+	bool HittedAnything()
+	{
+		return hitScripts.size() != 0;
+	}
 };
 
 class PhysicsManager : public ScriptBehaviour
@@ -66,5 +93,12 @@ public:
 	static physx::PxRigidStatic* CreateStaticBox(BoxCollider& collider, Vector3 position, Vector3 scale);
 	static physx::PxRigidDynamic* CreateDynamicBox(BoxCollider& collider, Vector3 position, Vector3 scale);
 
+	static physx::PxRigidStatic* CreateStaticBox(BoxCollider& collider, Vector3 position, Vector3 scale, bool isTrigger);
+	static physx::PxRigidDynamic* CreateDynamicBox(BoxCollider& collider, Vector3 position, Vector3 scale, bool isTrigger);
+
 	static bool Raycast(Vector3 origin, Vector3 direction, int maxDistance);
+	static bool Raycast(Vector3 origin, Vector3 direction, int maxDistance, RaycastBuffer& buffer);
+
+	static bool ScreenCameraRaycast(Camera& cam, Vector2 point, int maxDistance, RaycastBuffer& buff);
+	static bool ScreenCameraRaycast(Camera& cam, Vector2 point, int maxDistance);
 };

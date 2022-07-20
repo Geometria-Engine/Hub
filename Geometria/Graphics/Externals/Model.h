@@ -1,3 +1,6 @@
+#ifndef MODEL_H
+#define MODEL_H
+
 #include "../../Behaviours/Behaviour.h"
 #include "Vertex.h"
 class Texture;
@@ -114,6 +117,8 @@ public:
 	int sortingLayer = 0;
 	int sortingOrder = 0;
 
+	int miniShaderId = 0;
+
 	Texture* texture = nullptr;
 	bool initialized = false;
 
@@ -205,3 +210,5 @@ public:
 		std::cout << "(" << vertices[3].position.x << " " << vertices[3].position.y << " " << vertices[3].position.z << ")" << std::endl;
 	}
 };
+
+#endif

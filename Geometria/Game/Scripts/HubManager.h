@@ -18,7 +18,6 @@ struct HubManager : public ScriptBehaviour
 		isUniversal = true;
 		defaultValuesAdded = false;
 		creating = false;
-		win = nullptr;
 	}
 
 	void OnUpdate()
@@ -31,6 +30,11 @@ struct HubManager : public ScriptBehaviour
 				if (dirInput != nullptr)
 				{
 					dirInput->strData = Files::GetDirectoryOf(Files::GetExecutablePath().c_str()) + "/Projects";
+					std::cout << "[STRDATA] " << dirInput->strData << std::endl;
+				}
+				else
+				{
+					std::cout << "[WARNING] Dir Input is nullptr!" << std::endl;
 				}
 				ImGUIElement* exitBtn = win->FindElementWithName("CloseBtn");
 				
@@ -40,6 +44,8 @@ struct HubManager : public ScriptBehaviour
 				Files::ClearConsole();
 				defaultValuesAdded = true;
 			}
+			else
+				std::cout << "[WARNING] win is nullptr!" << std::endl;
 		}
 
 		std::string bMessage = Broadcast::ShowBroadcastMessage("--hub-create {Project Name}|{Directory}");
@@ -140,6 +146,7 @@ struct HubManager : public ScriptBehaviour
 		Files::Write(premakeUrl.c_str(), premakeFile);
 
 		BuildProjectFile();
+		CopyPasteToolkit();
 	}
 
 	static void BuildProjectFile()
@@ -166,6 +173,21 @@ struct HubManager : public ScriptBehaviour
 			system(premakeCommand.c_str());
 			isProjectCreationFinished = true;
 		}
+	}
+
+	static void CopyPasteToolkit()
+	{
+		if(Application::IsPlatform(Application::Windows))
+		{
+			std::string cnt = Files::Read(Files::GetExecutablePath().c_str(), true);
+			std::string finalUrl = currentUrl + "/Geometria.exe";
+			Files::Write(finalUrl.c_str(), cnt);
+		}
+	}
+
+	static void OpenPrjInFileExplorer()
+	{
+
 	}
 
 	void ExitButton()

@@ -74,6 +74,25 @@ public:
 	Sorting sort = Sorting::Update;
 	Mode mode = Mode::To3D;
 
+	enum DepthBuffer
+	{
+		Enabled,
+		DisableOnStart,
+		DisableOnEnd
+	};
+
+	enum InternalDepthMask
+	{
+		DMEnabled,
+		DMDisabled
+	};
+
+	DepthBuffer depthB = DepthBuffer::Enabled;
+	InternalDepthMask intDM = InternalDepthMask::DMEnabled;
+
+	void SetDepthBufferState(DepthBuffer d) { depthB = d; }
+	void SetInternalDepthMask(InternalDepthMask i ) { intDM = i; }
+
 	int _lastVertCount = 0;
 	int _lastIndexCount = 0;
 	int _modifyVertexTimer = 0;

@@ -127,6 +127,11 @@ int main(int argc, char** argv)
 
             exit(0);
         }
+        else if(commandLine == "--get-exec-path")
+        {
+            std::cout << Files::GetExecutablePath() << std::endl;
+            exit(0);
+        }
     }
 
     std::string gamefolder = std::experimental::filesystem::current_path().u8string() + "/Game";
@@ -348,8 +353,8 @@ int main(int argc, char** argv)
                         }
                     }
 
-                    if (Input::GetKeyDown(GLFW_KEY_C))
-                        CompilationCore::Compile();
+                    //if (Input::GetKeyDown(GLFW_KEY_C))
+                    //    CompilationCore::Compile();
 
                     if (Input::GetKeyDown(GLFW_KEY_S))
                     {

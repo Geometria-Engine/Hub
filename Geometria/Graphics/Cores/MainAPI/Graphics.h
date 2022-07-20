@@ -8,9 +8,14 @@
 #include "../Window/Window.h"
 #include "../Shader/Shader.h"
 #include "../Camera/Camera.h"
-//#include "../../Externals/DragBorderlessWindow.h"
-//#include "Behaviours/Behaviour.h"
+
 #include "CommonObjects/Empty.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#undef CreateWindow
+#endif
+
 
 class RendererCore;
 class Camera;
@@ -64,6 +69,7 @@ public:
 
 		
 	}
+
 	//==[GRAPHIC LIBRARY CALLBACKS]==/
 
 	//=================================[ GPU ]=================================//

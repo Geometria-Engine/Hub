@@ -190,132 +190,132 @@ Vector2 Vector2::operator/=(const float& A) {
 //==================//
 
 //==[ == OPERATOR ]==//
-bool operator==(Vector2& l, Vector2 r)
+bool operator==(Vector2& l, Vector2& r)
 {
 	return l.x == r.x && l.y == r.y;
 }
 
-bool operator==(Vector2& l, Vector3 r)
+bool operator==(Vector2& l, Vector3& r)
 {
 	return l.x == r.x && l.y == r.y;
 }
 
-bool operator==(Vector2& l, Vector4 r)
+bool operator==(Vector2& l, Vector4& r)
 {
 	return l.x == r.x && l.y == r.y;
 }
 
-bool operator==(Vector2& l, Color r)
+bool operator==(Vector2& l, Color& r)
 {
 	return l.x == r.r && l.y == r.g;
 }
 //===================//
 
 //==[ != OPERATOR ]==//
-bool operator!=(Vector2& l, Vector2 r)
+bool operator!=(Vector2& l, Vector2& r)
 {
 	return l.x != r.x || l.y != r.y;
 }
 
-bool operator!=(Vector2& l, Vector3 r)
+bool operator!=(Vector2& l, Vector3& r)
 {
 	return l.x != r.x || l.y != r.y;
 }
 
-bool operator!=(Vector2& l, Vector4 r)
+bool operator!=(Vector2& l, Vector4& r)
 {
 	return l.x != r.x || l.y != r.y;
 }
 
-bool operator!=(Vector2& l, Color r)
+bool operator!=(Vector2& l, Color& r)
 {
 	return l.x != r.r || l.y != r.g;
 }
 //====================//
 
 //==[ >= OPERATOR ]==//
-bool operator>=(Vector2& l, Vector2 r)
+bool operator>=(Vector2& l, Vector2& r)
 {
 	return l.x >= r.x || l.y >= r.y;
 }
 
-bool operator>=(Vector2& l, Vector3 r)
+bool operator>=(Vector2& l, Vector3& r)
 {
 	return l.x >= r.x || l.y >= r.y;
 }
 
-bool operator>=(Vector2& l, Vector4 r)
+bool operator>=(Vector2& l, Vector4& r)
 {
 	return l.x >= r.x || l.y >= r.y;
 }
 
-bool operator>=(Vector2& l, Color r)
+bool operator>=(Vector2& l, Color& r)
 {
 	return l.x >= r.r || l.y >= r.g;
 }
 //====================//
 
 //==[ <= OPERATOR ]==//
-bool operator<=(Vector2& l, Vector2 r)
+bool operator<=(Vector2& l, Vector2& r)
 {
 	return l.x <= r.x || l.y <= r.y;
 }
 
-bool operator<=(Vector2& l, Vector3 r)
+bool operator<=(Vector2& l, Vector3& r)
 {
 	return l.x <= r.x || l.y <= r.y;
 }
 
-bool operator<=(Vector2& l, Vector4 r)
+bool operator<=(Vector2& l, Vector4& r)
 {
 	return l.x <= r.x || l.y <= r.y;
 }
 
-bool operator<=(Vector2& l, Color r)
+bool operator<=(Vector2& l, Color& r)
 {
 	return l.x <= r.r || l.y <= r.g;
 }
 //====================//
 
 //==[ > OPERATOR ]==//
-bool operator>(Vector2& l, Vector2 r)
+bool operator>(Vector2& l, Vector2& r)
 {
 	return l.x > r.x || l.y > r.y;
 }
 
-bool operator>(Vector2& l, Vector3 r)
+bool operator>(Vector2& l, Vector3& r)
 {
 	return l.x > r.x || l.y > r.y;
 }
 
-bool operator>(Vector2& l, Vector4 r)
+bool operator>(Vector2& l, Vector4& r)
 {
 	return l.x > r.x || l.y > r.y;
 }
 
-bool operator>(Vector2& l, Color r)
+bool operator>(Vector2& l, Color& r)
 {
 	return l.x > r.r || l.y > r.g;
 }
 //===================//
 
 //==[ < OPERATOR ]==//
-bool operator<(Vector2& l, Vector2 r)
+bool operator<(Vector2& l, Vector2& r)
 {
 	return l.x < r.x || l.y < r.y;
 }
 
-bool operator<(Vector2& l, Vector3 r)
+bool operator<(Vector2& l, Vector3& r)
 {
 	return l.x < r.x || l.y < r.y;
 }
 
-bool operator<(Vector2& l, Vector4 r)
+bool operator<(Vector2& l, Vector4& r)
 {
 	return l.x < r.x || l.y < r.y;
 }
 
-bool operator<(Vector2& l, Color r)
+bool operator<(Vector2& l, Color& r)
 {
 	return l.x < r.r || l.y < r.g;
 }
@@ -545,132 +545,132 @@ float Vector3::Magnitude()
 //==================//
 
 //==[ == OPERATOR ]==//
-bool operator==(Vector3& l, Vector2 r)
+bool operator==(Vector3& l, Vector2& r)
 {
 	return l.x == r.x && l.y == r.y;
 }
 
-bool operator==(Vector3& l, Vector3 r)
+bool operator==(Vector3& l, Vector3& r)
 {
 	return l.x == r.x && l.y == r.y && l.z == r.z;
 }
 
-bool operator==(Vector3& l, Vector4 r)
+bool operator==(Vector3& l, Vector4& r)
 {
 	return l.x == r.x && l.y == r.y && l.z == r.z;
 }
 
-bool operator==(Vector3& l, Color r)
+bool operator==(Vector3& l, Color& r)
 {
 	return l.x == r.r && l.y == r.g && l.z == r.b;
 }
 //===================//
 
 //==[ != OPERATOR ]==//
-bool operator!=(Vector3& l, Vector2 r)
+bool operator!=(Vector3& l, Vector2& r)
 {
 	return l.x != r.x || l.y != r.y;
 }
 
-bool operator!=(Vector3& l, Vector3 r)
+bool operator!=(Vector3& l, Vector3& r)
 {
 	return l.x != r.x || l.y != r.y || l.z != r.z;
 }
 
-bool operator!=(Vector3& l, Vector4 r)
+bool operator!=(Vector3& l, Vector4& r)
 {
 	return l.x != r.x || l.y != r.y || l.z != r.z;
 }
 
-bool operator!=(Vector3& l, Color r)
+bool operator!=(Vector3& l, Color& r)
 {
 	return l.x == r.r && l.y == r.g && l.z == r.b;
 }
 //====================//
 
 //==[ >= OPERATOR ]==//
-bool operator>=(Vector3& l, Vector2 r)
+bool operator>=(Vector3& l, Vector2& r)
 {
 	return l.x >= r.x || l.y >= r.y;
 }
 
-bool operator>=(Vector3& l, Vector3 r)
+bool operator>=(Vector3& l, Vector3& r)
 {
 	return l.x >= r.x || l.y >= r.y || l.z >= r.z;
 }
 
-bool operator>=(Vector3& l, Vector4 r)
+bool operator>=(Vector3& l, Vector4& r)
 {
 	return l.x >= r.x || l.y >= r.y || l.z >= r.z;
 }
 
-bool operator>=(Vector3& l, Color r)
+bool operator>=(Vector3& l, Color& r)
 {
 	return l.x >= r.r || l.y >= r.g || l.z >= r.b;
 }
 //====================//
 
 //==[ <= OPERATOR ]==//
-bool operator<=(Vector3& l, Vector2 r)
+bool operator<=(Vector3& l, Vector2& r)
 {
 	return l.x <= r.x || l.y <= r.y;
 }
 
-bool operator<=(Vector3& l, Vector3 r)
+bool operator<=(Vector3& l, Vector3& r)
 {
 	return l.x <= r.x || l.y <= r.y || l.z <= r.z;
 }
 
-bool operator<=(Vector3& l, Vector4 r)
+bool operator<=(Vector3& l, Vector4& r)
 {
 	return l.x <= r.x || l.y <= r.y || l.z <= r.z;
 }
 
-bool operator<=(Vector3& l, Color r)
+bool operator<=(Vector3& l, Color& r)
 {
 	return l.x <= r.r || l.y <= r.g || l.z <= r.b;
 }
 //====================//
 
 //==[ > OPERATOR ]==//
-bool operator>(Vector3& l, Vector2 r)
+bool operator>(Vector3& l, Vector2& r)
 {
 	return l.x > r.x || l.y > r.y;
 }
 
-bool operator>(Vector3& l, Vector3 r)
+bool operator>(Vector3& l, Vector3& r)
 {
 	return l.x > r.x || l.y > r.y || l.z > r.z;
 }
 
-bool operator>(Vector3& l, Vector4 r)
+bool operator>(Vector3& l, Vector4& r)
 {
 	return l.x > r.x || l.y > r.y || l.z > r.z;
 }
 
-bool operator>(Vector3& l, Color r)
+bool operator>(Vector3& l, Color& r)
 {
 	return l.x > r.r || l.y > r.g || l.z > r.b;
 }
 //===================//
 
 //==[ < OPERATOR ]==//
-bool operator<(Vector3& l, Vector2 r)
+bool operator<(Vector3& l, Vector2& r)
 {
 	return l.x < r.x || l.y < r.y;
 }
 
-bool operator<(Vector3& l, Vector3 r)
+bool operator<(Vector3& l, Vector3& r)
 {
 	return l.x < r.x || l.y < r.y || l.z < r.z;
 }
 
-bool operator<(Vector3& l, Vector4 r)
+bool operator<(Vector3& l, Vector4& r)
 {
 	return l.x < r.x || l.y < r.y || l.z < r.z;
 }
 
-bool operator<(Vector3& l, Color r)
+bool operator<(Vector3& l, Color& r)
 {
 	return l.x < r.r || l.y < r.g || l.z < r.b;
 }
@@ -689,11 +689,16 @@ Vector4::Vector4(const Color& A) : x(A.r), y(A.g), z(A.b), w(A.a) { }
 
 void Vector4::SendChangeEvent()
 {
-	for (int i = 0; i < sharedModels.size(); i++)
+	if(EventEnabled())
 	{
-		if (EventEnabled())
+		for (int i = 0; i < sharedModels.size(); i++)
 		{
 			sharedModels[i]->OnChange();
+		}
+
+		for(int i = 0; i < sharedFunctions.size(); i++)
+		{
+			sharedFunctions[i]();
 		}
 	}
 }
@@ -939,132 +944,132 @@ Vector4 Vector4::operator/=(const float& A) {
 //==================//
 
 //==[ == OPERATOR ]==//
-bool operator==(Vector4& l, Vector2 r)
+bool operator==(Vector4& l, Vector2& r)
 {
 	return l.x == r.x && l.y == r.y;
 }
 
-bool operator==(Vector4& l, Vector3 r)
+bool operator==(Vector4& l, Vector3& r)
 {
 	return l.x == r.x && l.y == r.y && l.z == r.z;
 }
 
-bool operator==(Vector4& l, Vector4 r)
+bool operator==(Vector4& l, Vector4& r)
 {
 	return l.x == r.x && l.y == r.y && l.z == r.z && l.w == r.w;
 }
 
-bool operator==(Vector4& l, Color r)
+bool operator==(Vector4& l, Color& r)
 {
 	return l.x == r.r && l.y == r.g && l.z == r.b && l.w == r.a;
 }
 //===================//
 
 //==[ != OPERATOR ]==//
-bool operator!=(Vector4& l, Vector2 r)
+bool operator!=(Vector4& l, Vector2& r)
 {
 	return l.x != r.x || l.y != r.y;
 }
 
-bool operator!=(Vector4& l, Vector3 r)
+bool operator!=(Vector4& l, Vector3& r)
 {
 	return l.x != r.x || l.y != r.y || l.z != r.z;
 }
 
-bool operator!=(Vector4& l, Vector4 r)
+bool operator!=(Vector4& l, Vector4& r)
 {
 	return l.x != r.x || l.y != r.y || l.z != r.z || l.w != r.w;
 }
 
-bool operator!=(Vector4& l, Color r)
+bool operator!=(Vector4& l, Color& r)
 {
 	return l.x != r.r || l.y != r.g || l.z != r.b || l.w != r.a;
 }
 //====================//
 
 //==[ >= OPERATOR ]==//
-bool operator>=(Vector4& l, Vector2 r)
+bool operator>=(Vector4& l, Vector2& r)
 {
 	return l.x >= r.x || l.y >= r.y;
 }
 
-bool operator>=(Vector4& l, Vector3 r)
+bool operator>=(Vector4& l, Vector3& r)
 {
 	return l.x >= r.x || l.y >= r.y || l.z >= r.z;
 }
 
-bool operator>=(Vector4& l, Vector4 r)
+bool operator>=(Vector4& l, Vector4& r)
 {
 	return l.x >= r.x || l.y >= r.y || l.z >= r.z || l.w >= r.w;
 }
 
-bool operator>=(Vector4& l, Color r)
+bool operator>=(Vector4& l, Color& r)
 {
 	return l.x >= r.r || l.y >= r.g || l.z >= r.b || l.w >= r.a;
 }
 //====================//
 
 //==[ <= OPERATOR ]==//
-bool operator<=(Vector4& l, Vector2 r)
+bool operator<=(Vector4& l, Vector2& r)
 {
 	return l.x <= r.x || l.y <= r.y;
 }
 
-bool operator<=(Vector4& l, Vector3 r)
+bool operator<=(Vector4& l, Vector3& r)
 {
 	return l.x <= r.x || l.y <= r.y || l.z <= r.z;
 }
 
-bool operator<=(Vector4& l, Vector4 r)
+bool operator<=(Vector4& l, Vector4& r)
 {
 	return l.x <= r.x || l.y <= r.y || l.z <= r.z || l.w <= r.w;
 }
 
-bool operator<=(Vector4& l, Color r)
+bool operator<=(Vector4& l, Color& r)
 {
 	return l.x <= r.r || l.y <= r.g || l.z <= r.b || l.w <= r.a;
 }
 //====================//
 
 //==[ > OPERATOR ]==//
-bool operator>(Vector4& l, Vector2 r)
+bool operator>(Vector4& l, Vector2& r)
 {
 	return l.x > r.x || l.y > r.y;
 }
 
-bool operator>(Vector4& l, Vector3 r)
+bool operator>(Vector4& l, Vector3& r)
 {
 	return l.x > r.x || l.y > r.y || l.z > r.z;
 }
 
-bool operator>(Vector4& l, Vector4 r)
+bool operator>(Vector4& l, Vector4& r)
 {
 	return l.x > r.x || l.y > r.y || l.z > r.z || l.w > r.w;
 }
 
-bool operator>(Vector4& l, Color r)
+bool operator>(Vector4& l, Color& r)
 {
 	return l.x > r.r || l.y > r.g || l.z > r.b || l.w > r.a;
 }
 //===================//
 
 //==[ < OPERATOR ]==//
-bool operator<(Vector4& l, Vector2 r)
+bool operator<(Vector4& l, Vector2& r)
 {
 	return l.x < r.x || l.y < r.y;
 }
 
-bool operator<(Vector4& l, Vector3 r)
+bool operator<(Vector4& l, Vector3& r)
 {
 	return l.x < r.x || l.y < r.y || l.z < r.z;
 }
 
-bool operator<(Vector4& l, Vector4 r)
+bool operator<(Vector4& l, Vector4& r)
 {
 	return l.x < r.x || l.y < r.y || l.z < r.z || l.w < r.w;
 }
 
-bool operator<(Vector4& l, Color r)
+bool operator<(Vector4& l, Color& r)
 {
 	return l.x < r.r || l.y < r.g || l.z < r.b || l.w < r.a;
 }

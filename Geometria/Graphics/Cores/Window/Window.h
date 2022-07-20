@@ -1,4 +1,7 @@
 #pragma once
+#ifndef WINDOW_H
+#define WINDOW_H
+
 #include <glfw3.h>
 
 class Graphics;
@@ -16,6 +19,7 @@ public:
 	static bool keys[1024];
 	static int keysState[1024];
 	static bool mouse[32];
+	static bool mouseState[32];
 
 	static bool SizeChanged;
 
@@ -52,3 +56,5 @@ public:
 	const char* Title;
 
 };
+
+#endif

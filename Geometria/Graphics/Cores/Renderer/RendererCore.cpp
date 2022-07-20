@@ -64,6 +64,7 @@ void RendererCore::AddModel(Model& m, DrawCall& d)
 	for (int i = 0; i < m.vertices.size(); i++)
 	{
 		m.vertices[i].color = glm::vec4(m.color.r, m.color.g, m.color.b, m.color.a);
+		m.vertices[i].miniShaderId = m.miniShaderId;
 
 		if (m.texture != nullptr)
 		{
@@ -112,6 +113,10 @@ void RendererCore::AddModel(Model& m, DrawCall& d)
 				texCount = 0;
 				break;
 			}
+		}
+		else
+		{
+			m.vertices[i].textureGroupId = -1;
 		}
 
 		d.allVerts.push_back(m.vertices[i]);
@@ -262,10 +267,12 @@ void RendererCore::OpenGL_Start_DrawCall(DrawCall& d)
 {
 	if (d.allIndices.size() == 0)
 	{
-		//std::cout << "Starting Draw Call " << d.id << std::endl;
+		std::cout << "Starting Draw Call " << d.id << " (OpenGL Version: " << glGetString(GL_VERSION) << ")" << std::endl;
 		SetUpWorldMatrix(d);
 
-		d.mainShader = new Shader(Files::Read("EngineResources/basic.vert"), Files::Read("EngineResources/basic.frag"));
+		d.mainShader = new Shader(
+			MiniShader::RewriteForShaderVersion(Files::Read("EngineResources/basic.vert"), 1.30f, false),
+			MiniShader::RewriteForShaderVersion(Files::Read("EngineResources/basic.frag"), 1.30f, true));
 
 		uint32_t indSize = 600000;
 		d.allIndices.resize(indSize);
@@ -335,6 +342,11 @@ void RendererCore::SetVAttr_Universal(DrawCall& d)
 	glEnableVertexAttribArray(pointerPosition);
 	pointerPosition++;
 
+	// Mini Shader ID
+	glVertexAttribPointer(pointerPosition, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, miniShaderId));
+	glEnableVertexAttribArray(pointerPosition);
+	pointerPosition++;
+
 	// Texture UV Coordinates
 	glVertexAttribPointer(pointerPosition, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
 	glEnableVertexAttribArray(pointerPosition);
@@ -375,6 +387,8 @@ void RendererCore::SetVAttr_AMDWindows(DrawCall& d)
 	glEnableVertexAttribArray(pointerPosition);
 	pointerPosition++;
 
+	// TODO: Add Mini Shaders
+
 	glBindVertexArray(0);
 }
 
@@ -397,6 +411,11 @@ void RendererCore::SetVAttr_IntelWindows(DrawCall& d)
 
 	// Texture Group ID
 	glVertexAttribPointer(pointerPosition, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, textureGroupId));
+	glEnableVertexAttribArray(pointerPosition);
+	pointerPosition++;
+
+	// Mini Shader ID
+	glVertexAttribPointer(pointerPosition, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, miniShaderId));
 	glEnableVertexAttribArray(pointerPosition);
 	pointerPosition++;
 
@@ -581,15 +600,12 @@ void RendererCore::SortVertices()
 
 					std::sort(d.allModels.begin(), d.allModels.end(), [&](Model* i, Model* j)
 						{
-							if (d.mode == DrawCall::Mode::To2D)
-							{
-								if (i->sortingLayer == j->sortingLayer)
-									return i->sortingLayer == j->sortingLayer && i->sortingOrder > j->sortingOrder;
+							//if (i->vertices.size() <= 4 && j->vertices.size() <= 4)
+							//{
+							//	return i->transform.position.z < j->transform.position.z;
+							//}
 
-								return i->sortingLayer > j->sortingLayer;
-							}
-
-							return Vector3::Distance(i->transform.position + i->transform.scale, Graphics::MainCamera()->GetCurrentPosition()) > Vector3::Distance(j->transform.position + j->transform.scale, Graphics::MainCamera()->GetCurrentPosition());
+							return Vector3::Distance(i->transform.position, Graphics::MainCamera()->GetCurrentPosition()) > Vector3::Distance(j->transform.position, Graphics::MainCamera()->GetCurrentPosition());
 						});
 
 					int vertexCount = 0;
@@ -833,6 +849,8 @@ void RendererCore::OpenGL_Render()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		Graphics::MainCamera()->UpdateCameraSpace();
+
 		//std::cout << "Clearing Screen" << std::endl;
 
 		for (int scene = 0; scene < SceneManager::_allScenes.size(); scene++)
@@ -841,6 +859,12 @@ void RendererCore::OpenGL_Render()
 			{
 				//std::cout << "Scene: " << scene + 1 << " Draw Call: " << draw + 1 << std::endl;
 				DrawCall& d = *SceneManager::_allScenes[scene]._drawCalls[draw];
+
+				if(d.depthB == DrawCall::DepthBuffer::DisableOnStart)
+					glClear(GL_DEPTH_BUFFER_BIT);
+
+				if(d.intDM == DrawCall::InternalDepthMask::DMDisabled)
+					glDepthMask(GL_FALSE);
 
 				if (d.deleteProcess)
 				{
@@ -973,6 +997,12 @@ void RendererCore::OpenGL_Render()
 
 					//glDrawElements(GL_TRIANGLES, allIndices.size(), GL_UNSIGNED_INT, nullptr);
 				}
+
+				if(d.depthB == DrawCall::DepthBuffer::DisableOnEnd)
+					glClear(GL_DEPTH_BUFFER_BIT);
+
+				if(d.intDM == DrawCall::InternalDepthMask::DMDisabled)
+					glDepthMask(GL_TRUE);
 			}
 		}
 	}

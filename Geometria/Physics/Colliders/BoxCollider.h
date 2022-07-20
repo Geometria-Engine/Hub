@@ -24,6 +24,10 @@ struct BoxCollider : public ScriptBehaviour
 
 	Vector3 size = Vector3(1);
 
+	bool _isTrigger = false;
+
+	bool _setTriggerOnUpdate = false;
+
 	BoxCollider()
 	{
 	}
@@ -36,5 +40,8 @@ struct BoxCollider : public ScriptBehaviour
 	void OnInspector();
 	void OnSave();
 	void OnUpdate();
+	void OnDestroy();
+	void OnTransformChange(int value);
 	void SetScale(Vector3 size);
+	void SetTrigger(bool t);
 };
