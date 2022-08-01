@@ -146,7 +146,7 @@ struct HubManager : public ScriptBehaviour
 		Files::Write(premakeUrl.c_str(), premakeFile);
 
 		BuildProjectFile();
-		CopyPasteToolkit();
+		//OpenPrjInFileExplorer();
 	}
 
 	static void BuildProjectFile()
@@ -175,19 +175,14 @@ struct HubManager : public ScriptBehaviour
 		}
 	}
 
-	static void CopyPasteToolkit()
-	{
-		if(Application::IsPlatform(Application::Windows))
-		{
-			std::string cnt = Files::Read(Files::GetExecutablePath().c_str(), true);
-			std::string finalUrl = currentUrl + "/Geometria.exe";
-			Files::Write(finalUrl.c_str(), cnt);
-		}
-	}
-
 	static void OpenPrjInFileExplorer()
 	{
-
+		if(Application::IsPlatform(Application::Platform::Windows))
+		{
+			std::string cmd = "explorer \"" + currentUrl + "\"";
+			std::cout << cmd << std::endl;
+			//system(cmd.c_str());
+		}
 	}
 
 	void ExitButton()
