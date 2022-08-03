@@ -6,6 +6,7 @@
 #include "Physics/Colliders/BoxCollider.h"
 #include "Game/Scripts/HubManager.h"
 #include "Game/Scripts/DynamicLinker.h"
+#include "Game/Scripts/EngineUpdater.h"
 
 //Original name: Chingatumadre Engine
 
@@ -78,11 +79,7 @@ int main(int argc, char** argv)
 
             if(message == "Yes, i perfectly know what i'm doing")
             {
-                std::cout << "Updating Geometria Engine...\n";
-                system("git stash");
-                system("git pull --force");
-                system("git stash pop");
-                std::cout << "Geometria Engine is now up to date!\n";
+                EngineUpdater::Update();
                 HubManager::ChangeCurrentURL(std::experimental::filesystem::current_path().u8string());
                 HubManager::ChangeCurrentProjectName(std::experimental::filesystem::current_path().filename().u8string());
                 HubManager::SetUpProject();

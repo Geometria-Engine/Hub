@@ -42,15 +42,32 @@ struct Files
 	static int UnZIP(const char* url);
 
 	static void CreateDirectory(const char* url);
+	static void CopyDirectory(const char* url, const char* dest);
+	static void DeleteDirectory(const char* url);
 	static bool DirectoryExists(const char* url);
 	static std::string GetDirectoryOf(const char* file);
+
+	static std::string GetGamePath();
 
 	static std::string WhereIs(std::string name);
 
 	static std::string RunCommand(std::string cmd);
 	static std::string GetPathFromCommand(std::string cmd);
 	static std::string GetValueFromCommand(std::string cmd);
+
 	static void ClearConsole();
+	static void ShowConsole()
+	{
+		#ifdef _WIN32
+			ShowWindow(GetConsoleWindow(), SW_SHOW);
+		#endif
+	}
+	static void HideConsole()
+	{
+		#ifdef _WIN32
+			ShowWindow(GetConsoleWindow(), SW_HIDE);
+		#endif
+	}
 
 	static void ChangeCurrentDirectory(std::string path);
 
