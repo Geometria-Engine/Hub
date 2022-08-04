@@ -7,6 +7,7 @@
 #include "Game/Scripts/HubManager.h"
 #include "Game/Scripts/DynamicLinker.h"
 #include "Game/Scripts/EngineUpdater.h"
+#include "Game/Scripts/ToolkitUpdater.h"
 
 DONT_UPDATE_FILE()
 
@@ -44,6 +45,12 @@ void Main_Compile()
 
 int main(int argc, char** argv)
 {
+    if(argc != 0)
+    {
+        if(std::experimental::filesystem::exists("geo.exe.old"))
+            Files::Remove("geo.exe.old");
+    }
+
     for (int i = 0; i < argc; i++)
     {
         std::string commandLine = argv[i];
@@ -91,6 +98,11 @@ int main(int argc, char** argv)
 
             exit(0);
         }
+        else if(commandLine == "--update-toolkit")
+        {
+            ToolkitUpdater::DownloadLatestToolkit();
+            exit(0);
+        }
         else if(commandLine == "--create")
         {
             HubManager::isFromCommandLine = true;
@@ -131,9 +143,13 @@ int main(int argc, char** argv)
             std::cout << Files::GetExecutablePath() << std::endl;
             exit(0);
         }
+        else if(commandLine == "--version")
+        {
+            std::cout << "0.2.3" << std::endl;
+        }
         else if(commandLine == "--macro-test")
         {
-            EngineUpdater::ReturnBackupFiles();
+            //ToolkitUpdater::InstallNewToolkit("hello :D");
             exit(0);
         }
     }
