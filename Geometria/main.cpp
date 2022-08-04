@@ -8,6 +8,8 @@
 #include "Game/Scripts/DynamicLinker.h"
 #include "Game/Scripts/EngineUpdater.h"
 
+DONT_UPDATE_FILE()
+
 //Original name: Chingatumadre Engine
 
 static std::vector<Model*> models;
@@ -127,6 +129,11 @@ int main(int argc, char** argv)
         else if(commandLine == "--get-exec-path")
         {
             std::cout << Files::GetExecutablePath() << std::endl;
+            exit(0);
+        }
+        else if(commandLine == "--macro-test")
+        {
+            EngineUpdater::ReturnBackupFiles();
             exit(0);
         }
     }
