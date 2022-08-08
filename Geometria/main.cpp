@@ -8,6 +8,7 @@
 #include "Game/Scripts/DynamicLinker.h"
 #include "Game/Scripts/EngineUpdater.h"
 #include "Game/Scripts/ToolkitUpdater.h"
+#include "Game/Scripts/FirstTimeInstaller.h"
 
 DONT_UPDATE_FILE()
 
@@ -22,6 +23,10 @@ bool HubManager::defaultValuesAdded = false;
 ImGUIElement* HubManager::win;
 ImGUIElement* HubManager::status;
 
+std::string FirstTimeInstaller::input;
+bool FirstTimeInstaller::makeFirstTimeFile;
+bool FirstTimeInstaller::downloadGitInstaller;
+
 void Main_Compile()
 {
     if (Application::IsPlatform(Application::Windows))
@@ -30,7 +35,7 @@ void Main_Compile()
 
         //DynamicLinker::Link();
 
-        std::string getMSBuild = Files::GetPathFromCommand(Files::ConvertToWindowsCmdPath("C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe") + " -latest -prerelease -products * -requires Microsoft.Component.MSBuild -find MSBuild/**/Bin/MSBuild.exe");
+        std::string getMSBuild = Files::GetPathFromCommand(Files::ConvertToWindowsCmdPath("C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe") + " -latest -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -find MSBuild/**/Bin/MSBuild.exe");
         std::string visualStudioVersion = Files::GetValueFromCommand(Files::ConvertToWindowsCmdPath("C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe") + " -latest -prerelease -products * -property productLineVersion");
         std::string premakeCmd = "premake5-windows.exe vs" + visualStudioVersion;
 
@@ -157,6 +162,12 @@ int main(int argc, char** argv)
     std::string gamefolder = std::experimental::filesystem::current_path().u8string() + "/Game";
     if(!Files::DirectoryExists(gamefolder.c_str()))
         exit(0);
+
+    if(!std::experimental::filesystem::exists("firsttime"))
+    {
+        FirstTimeInstaller::Start();
+        exit(0);
+    }
 
     if (Graphics::IsIntelGPUBypassed())
     {
