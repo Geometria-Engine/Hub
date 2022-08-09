@@ -74,7 +74,12 @@ struct EngineUpdater
 		std::cout << "Updating Engine from Git..." << std::endl;
 
 		std::string gitignoreContent = Files::Read(".gitignore");
-		gitignoreContent = StringAPI::ReplaceAll(gitignoreContent, "geo.exe", "!geo.exe");
+
+		if(Application::IsPlatform(Application::Windows))
+			gitignoreContent = StringAPI::ReplaceAll(gitignoreContent, "!geo.exe", "geo.exe");
+		else if(Application::IsPlatform(Application::Linux))
+			gitignoreContent = StringAPI::ReplaceAll(gitignoreContent, "!geo", "geo");
+
 		Files::Write(".gitignore", gitignoreContent);
 
 		system("git update-index --skip-worktree \"BackupGame/\"");
@@ -85,7 +90,11 @@ struct EngineUpdater
 		system("git pull upstream main");
 		system("git remote rm upstream");
 
-		gitignoreContent = StringAPI::ReplaceAll(gitignoreContent, "!geo.exe", "geo.exe");
+		if(Application::IsPlatform(Application::Windows))
+			gitignoreContent = StringAPI::ReplaceAll(gitignoreContent, "geo.exe", "!geo.exe");
+		else if(Application::IsPlatform(Application::Linux))
+			gitignoreContent = StringAPI::ReplaceAll(gitignoreContent, "geo", "!geo");
+		
 		Files::Write(".gitignore", gitignoreContent);
 
 		std::cout << "Update done!" << std::endl;
