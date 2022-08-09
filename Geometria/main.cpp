@@ -46,6 +46,13 @@ void Main_Compile()
             std::cout << "Project Compiled!" << std::endl;
         }
     }
+    else if(Application::IsPlatform(Application::Linux))
+    {
+	system("chmod -R 777 premake5-linux");
+	system("./premake5-linux gmake2");
+	system("make");
+	std::cout << "Project Compiled!" << std::endl;
+    }
 }
 
 int main(int argc, char** argv)

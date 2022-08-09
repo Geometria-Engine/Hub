@@ -80,35 +80,35 @@ struct Color
 	Color operator/(const Color& A) { Color result = *this; return result /= A; }
 	Color operator/(const float& A) { Color result = *this; return result /= A; }
 
-	friend bool operator==(const Color& l, Vector2& r);
-	friend bool operator==(const Color& l, Vector3& r);
-	friend bool operator==(const Color& l, Vector4& r);
-	friend bool operator==(const Color& l, Color& r);
+	friend bool operator==(const Color& l, const Vector2& r);
+	friend bool operator==(const Color& l, const Vector3& r);
+	friend bool operator==(const Color& l, const Vector4& r);
+	friend bool operator==(const Color& l, const Color& r);
 
-	friend bool operator!=(const Color& l, Vector2& r);
-	friend bool operator!=(const Color& l, Vector3& r);
-	friend bool operator!=(const Color& l, Vector4& r);
-	friend bool operator!=(const Color& l, Color& r);
+	friend bool operator!=(const Color& l, const Vector2& r);
+	friend bool operator!=(const Color& l, const Vector3& r);
+	friend bool operator!=(const Color& l, const Vector4& r);
+	friend bool operator!=(const Color& l, const Color& r);
 
-	friend bool operator>=(const Color& l, Vector2& r);
-	friend bool operator>=(const Color& l, Vector3& r);
-	friend bool operator>=(const Color& l, Vector4& r);
-	friend bool operator>=(const Color& l, Color& r);
+	friend bool operator>=(const Color& l, const Vector2& r);
+	friend bool operator>=(const Color& l, const Vector3& r);
+	friend bool operator>=(const Color& l, const Vector4& r);
+	friend bool operator>=(const Color& l, const Color& r);
 
-	friend bool operator<=(const Color& l, Vector2& r);
-	friend bool operator<=(const Color& l, Vector3& r);
-	friend bool operator<=(const Color& l, Vector4& r);
-	friend bool operator<=(const Color& l, Color& r);
+	friend bool operator<=(const Color& l, const Vector2& r);
+	friend bool operator<=(const Color& l, const Vector3& r);
+	friend bool operator<=(const Color& l, const Vector4& r);
+	friend bool operator<=(const Color& l, const Color& r);
 
-	friend bool operator>(const Color& l, Vector2& r);
-	friend bool operator>(const Color& l, Vector3& r);
-	friend bool operator>(const Color& l, Vector4& r);
-	friend bool operator>(const Color& l, Color& r);
+	friend bool operator>(const Color& l, const Vector2& r);
+	friend bool operator>(const Color& l, const Vector3& r);
+	friend bool operator>(const Color& l, const Vector4& r);
+	friend bool operator>(const Color& l, const Color& r);
 
-	friend bool operator<(const Color& l, Vector2& r);
-	friend bool operator<(const Color& l, Vector3& r);
-	friend bool operator<(const Color& l, Vector4& r);
-	friend bool operator<(const Color& l, Color& r);
+	friend bool operator<(const Color& l, const Vector2& r);
+	friend bool operator<(const Color& l, const Vector3& r);
+	friend bool operator<(const Color& l, const Vector4& r);
+	friend bool operator<(const Color& l, const Color& r);
 
 	static Color white() { return Color(1, 1, 1, 1); }
 	static Color black() { return Color(0, 0, 0, 1); }
