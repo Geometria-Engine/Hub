@@ -20,9 +20,9 @@ endif
 
 RESCOMP = windres
 TARGETDIR = .
-TARGET = $(TARGETDIR)/Geometria.exe
+TARGET = $(TARGETDIR)/Hub
 DEFINES += -D_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING -DGLEW_STATIC -DNDEBUG -D_CONSOLE -DCURL_STATICLIB
-INCLUDES += -I../Libraries/include -IBehaviours -IMainHeader -I. -IGame -I../Libraries/GLFW/GLFWCore/include/GLFW -I../Libraries/GLEW/GLEWCore/include -I../Libraries/YAMLCPP/YAMLCPPCore/include -I../Libraries/NVIDIAPHYSX/include -I../Libraries/NVIDIAPHYSX/pxshared/include -I../Libraries/CURL/include -I../Libraries/ZLIB
+INCLUDES += -I../Libraries/include -IBehaviours -IMainHeader -I. -IGame -I../Libraries/GLFW/GLFWCore/include/GLFW -I../Libraries/GLEW/GLEWCore/include -I../Libraries/YAMLCPP/YAMLCPPCore/include -I../Libraries/NVIDIAPHYSX/include -I../Libraries/NVIDIAPHYSX/pxshared/include -I.. -I../Libraries/ZLIB
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
 ALL_RESFLAGS += $(RESFLAGS) $(DEFINES) $(INCLUDES)
@@ -38,17 +38,17 @@ ifeq ($(config),release_x86_64)
 OBJDIR = obj/x86_64
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -w
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -w
-LIBS += ../Libraries/GLFW/bin/x86_64/Release/GLFW.lib ../Libraries/GLEW/bin/x86_64/Release/GLEW.lib ../Libraries/YAMLCPP/bin/x86_64/Release/yaml-cpp.lib ../Libraries/CURL/bin/x86_64/Release/curl-lib.lib ../Libraries/ZLIB/bin/x86_64/Release/zlib.lib -lopengl32 -lcrypt32 -lwldap32 -lWs2_32 -lPhysX_static_64 -lPhysXExtensions_static_64 -lPhysXCharacterKinematic_static_64 -lPhysXCooking_static_64 -lPhysXFoundation_static_64 -lPhysXVehicle_static_64 -lPhysXPvdSDK_static_64 -lPhysXCommon_static_64
-LDDEPS += ../Libraries/GLFW/bin/x86_64/Release/GLFW.lib ../Libraries/GLEW/bin/x86_64/Release/GLEW.lib ../Libraries/YAMLCPP/bin/x86_64/Release/yaml-cpp.lib ../Libraries/CURL/bin/x86_64/Release/curl-lib.lib ../Libraries/ZLIB/bin/x86_64/Release/zlib.lib
+LIBS += ../Libraries/GLFW/bin/x86_64/Release/libGLFW.a ../Libraries/GLEW/bin/x86_64/Release/libGLEW.a ../Libraries/YAMLCPP/bin/x86_64/Release/libyaml-cpp.a ../Libraries/ZLIB/bin/x86_64/Release/libzlib.a -lcurl -lGL -lpthread -lm -ldl -lstdc++fs -lPhysX_static_64 -lPhysXExtensions_static_64 -lPhysXCharacterKinematic_static_64 -lPhysXCooking_static_64 -lPhysXFoundation_static_64 -lPhysXVehicle_static_64 -lPhysXPvdSDK_static_64 -lPhysXCommon_static_64
+LDDEPS += ../Libraries/GLFW/bin/x86_64/Release/libGLFW.a ../Libraries/GLEW/bin/x86_64/Release/libGLEW.a ../Libraries/YAMLCPP/bin/x86_64/Release/libyaml-cpp.a ../Libraries/ZLIB/bin/x86_64/Release/libzlib.a
 ALL_LDFLAGS += $(LDFLAGS) -L../Libraries/NVIDIAPHYSX/binaries/Linux -L/usr/lib64 -m64 -s
 
 else ifeq ($(config),release_x86)
 OBJDIR = obj/x86
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -w
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -w
-LIBS += ../Libraries/GLFW/bin/x86/Release/GLFW.lib ../Libraries/GLEW/bin/x86/Release/GLEW.lib ../Libraries/YAMLCPP/bin/x86/Release/yaml-cpp.lib ../Libraries/CURL/bin/x86/Release/curl-lib.lib ../Libraries/ZLIB/bin/x86/Release/zlib.lib -lopengl32 -lcrypt32 -lwldap32 -lWs2_32 -lLowLevel_static_32 -lLowLevelAABB_static_32 -lLowLevelDynamics_static_32 -lPhysX_static_32 -lPhysXCharacterKinematic_static_32 -lPhysXCommon_static_32 -lPhysXCooking_static_32 -lPhysXExtensions_static_32 -lPhysXFoundation_static_32 -lPhysXPvdSDK_static_32 -lPhysXVehicle_static_32 -lSceneQuery_static_32 -lSimulationController_static_32
-LDDEPS += ../Libraries/GLFW/bin/x86/Release/GLFW.lib ../Libraries/GLEW/bin/x86/Release/GLEW.lib ../Libraries/YAMLCPP/bin/x86/Release/yaml-cpp.lib ../Libraries/CURL/bin/x86/Release/curl-lib.lib ../Libraries/ZLIB/bin/x86/Release/zlib.lib
-ALL_LDFLAGS += $(LDFLAGS) -L../Libraries/NVIDIAPHYSX/binaries/Win32 -L/usr/lib32 -m32 -s
+LIBS += ../Libraries/GLFW/bin/x86/Release/libGLFW.a ../Libraries/GLEW/bin/x86/Release/libGLEW.a ../Libraries/YAMLCPP/bin/x86/Release/libyaml-cpp.a ../Libraries/ZLIB/bin/x86/Release/libzlib.a -lcurl -lGL -lpthread -lm -ldl -lstdc++fs -lPhysX_static_64 -lPhysXExtensions_static_64 -lPhysXCharacterKinematic_static_64 -lPhysXCooking_static_64 -lPhysXFoundation_static_64 -lPhysXVehicle_static_64 -lPhysXPvdSDK_static_64 -lPhysXCommon_static_64
+LDDEPS += ../Libraries/GLFW/bin/x86/Release/libGLFW.a ../Libraries/GLEW/bin/x86/Release/libGLEW.a ../Libraries/YAMLCPP/bin/x86/Release/libyaml-cpp.a ../Libraries/ZLIB/bin/x86/Release/libzlib.a
+ALL_LDFLAGS += $(LDFLAGS) -L../Libraries/NVIDIAPHYSX/binaries/Linux -L/usr/lib32 -m32 -s
 
 endif
 
@@ -64,7 +64,6 @@ OBJECTS :=
 
 GENERATED += $(OBJDIR)/Animation.o
 GENERATED += $(OBJDIR)/Application.o
-GENERATED += $(OBJDIR)/AudioSource.o
 GENERATED += $(OBJDIR)/Behaviour.o
 GENERATED += $(OBJDIR)/BoxCollider.o
 GENERATED += $(OBJDIR)/Broadcast.o
@@ -73,6 +72,7 @@ GENERATED += $(OBJDIR)/Color.o
 GENERATED += $(OBJDIR)/CompilationCore.o
 GENERATED += $(OBJDIR)/Compiler.o
 GENERATED += $(OBJDIR)/DragBorderlessWindow.o
+GENERATED += $(OBJDIR)/DynamicLinker.o
 GENERATED += $(OBJDIR)/Editor.o
 GENERATED += $(OBJDIR)/Encryption.o
 GENERATED += $(OBJDIR)/Files.o
@@ -83,9 +83,12 @@ GENERATED += $(OBJDIR)/ImGUIElement.o
 GENERATED += $(OBJDIR)/ImGuizmo.o
 GENERATED += $(OBJDIR)/Input.o
 GENERATED += $(OBJDIR)/MaxRectsBinPack.o
+GENERATED += $(OBJDIR)/MiniAudioSource.o
+GENERATED += $(OBJDIR)/MiniShader.o
 GENERATED += $(OBJDIR)/Model.o
 GENERATED += $(OBJDIR)/Multithreading.o
 GENERATED += $(OBJDIR)/PhysicsManager.o
+GENERATED += $(OBJDIR)/Plane.o
 GENERATED += $(OBJDIR)/Rect.o
 GENERATED += $(OBJDIR)/RendererCore.o
 GENERATED += $(OBJDIR)/Rigidbody.o
@@ -95,6 +98,7 @@ GENERATED += $(OBJDIR)/Shader.o
 GENERATED += $(OBJDIR)/ShelfBinPack.o
 GENERATED += $(OBJDIR)/StringAPI.o
 GENERATED += $(OBJDIR)/Texture.o
+GENERATED += $(OBJDIR)/Trenchbroom.o
 GENERATED += $(OBJDIR)/Vector.o
 GENERATED += $(OBJDIR)/Web.o
 GENERATED += $(OBJDIR)/WebRequest.o
@@ -108,16 +112,15 @@ GENERATED += $(OBJDIR)/imgui_impl_opengl3.o
 GENERATED += $(OBJDIR)/imgui_tables.o
 GENERATED += $(OBJDIR)/imgui_widgets.o
 GENERATED += $(OBJDIR)/ioapi.o
-GENERATED += $(OBJDIR)/iowin32.o
 GENERATED += $(OBJDIR)/lodepng.o
 GENERATED += $(OBJDIR)/main.o
+GENERATED += $(OBJDIR)/miniaudio_impl.o
 GENERATED += $(OBJDIR)/mztools.o
 GENERATED += $(OBJDIR)/pugixml.o
 GENERATED += $(OBJDIR)/unzip.o
 GENERATED += $(OBJDIR)/zip.o
 OBJECTS += $(OBJDIR)/Animation.o
 OBJECTS += $(OBJDIR)/Application.o
-OBJECTS += $(OBJDIR)/AudioSource.o
 OBJECTS += $(OBJDIR)/Behaviour.o
 OBJECTS += $(OBJDIR)/BoxCollider.o
 OBJECTS += $(OBJDIR)/Broadcast.o
@@ -126,6 +129,7 @@ OBJECTS += $(OBJDIR)/Color.o
 OBJECTS += $(OBJDIR)/CompilationCore.o
 OBJECTS += $(OBJDIR)/Compiler.o
 OBJECTS += $(OBJDIR)/DragBorderlessWindow.o
+OBJECTS += $(OBJDIR)/DynamicLinker.o
 OBJECTS += $(OBJDIR)/Editor.o
 OBJECTS += $(OBJDIR)/Encryption.o
 OBJECTS += $(OBJDIR)/Files.o
@@ -136,9 +140,12 @@ OBJECTS += $(OBJDIR)/ImGUIElement.o
 OBJECTS += $(OBJDIR)/ImGuizmo.o
 OBJECTS += $(OBJDIR)/Input.o
 OBJECTS += $(OBJDIR)/MaxRectsBinPack.o
+OBJECTS += $(OBJDIR)/MiniAudioSource.o
+OBJECTS += $(OBJDIR)/MiniShader.o
 OBJECTS += $(OBJDIR)/Model.o
 OBJECTS += $(OBJDIR)/Multithreading.o
 OBJECTS += $(OBJDIR)/PhysicsManager.o
+OBJECTS += $(OBJDIR)/Plane.o
 OBJECTS += $(OBJDIR)/Rect.o
 OBJECTS += $(OBJDIR)/RendererCore.o
 OBJECTS += $(OBJDIR)/Rigidbody.o
@@ -148,6 +155,7 @@ OBJECTS += $(OBJDIR)/Shader.o
 OBJECTS += $(OBJDIR)/ShelfBinPack.o
 OBJECTS += $(OBJDIR)/StringAPI.o
 OBJECTS += $(OBJDIR)/Texture.o
+OBJECTS += $(OBJDIR)/Trenchbroom.o
 OBJECTS += $(OBJDIR)/Vector.o
 OBJECTS += $(OBJDIR)/Web.o
 OBJECTS += $(OBJDIR)/WebRequest.o
@@ -161,9 +169,9 @@ OBJECTS += $(OBJDIR)/imgui_impl_opengl3.o
 OBJECTS += $(OBJDIR)/imgui_tables.o
 OBJECTS += $(OBJDIR)/imgui_widgets.o
 OBJECTS += $(OBJDIR)/ioapi.o
-OBJECTS += $(OBJDIR)/iowin32.o
 OBJECTS += $(OBJDIR)/lodepng.o
 OBJECTS += $(OBJDIR)/main.o
+OBJECTS += $(OBJDIR)/miniaudio_impl.o
 OBJECTS += $(OBJDIR)/mztools.o
 OBJECTS += $(OBJDIR)/pugixml.o
 OBJECTS += $(OBJDIR)/unzip.o
@@ -177,7 +185,7 @@ all: $(TARGET)
 
 $(TARGET): $(GENERATED) $(OBJECTS) $(LDDEPS) | $(TARGETDIR)
 	$(PRELINKCMDS)
-	@echo Linking Geometria
+	@echo Linking Hub
 	$(SILENT) $(LINKCMD)
 	$(POSTBUILDCMDS)
 
@@ -198,7 +206,7 @@ else
 endif
 
 clean:
-	@echo Cleaning Geometria
+	@echo Cleaning Hub
 ifeq (posix,$(SHELLTYPE))
 	$(SILENT) rm -f  $(TARGET)
 	$(SILENT) rm -rf $(GENERATED)
@@ -237,9 +245,6 @@ $(OBJDIR)/Animation.o: Animation/Animation.cpp
 $(OBJDIR)/Application.o: Application/Application.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/AudioSource.o: Audio/AudioSource.cpp
-	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Behaviour.o: Behaviours/Behaviour.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
@@ -273,13 +278,13 @@ $(OBJDIR)/lodepng.o: Files/Image/lodepng.cpp
 $(OBJDIR)/SceneFile.o: Files/Scene/SceneFile.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/Trenchbroom.o: Files/Trenchbroom/Trenchbroom.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/pugixml.o: Files/XML/pugixml.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/ioapi.o: Files/ZIP/ioapi.c
-	@echo $(notdir $<)
-	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
-$(OBJDIR)/iowin32.o: Files/ZIP/iowin32.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/mztools.o: Files/ZIP/mztools.c
@@ -291,6 +296,9 @@ $(OBJDIR)/unzip.o: Files/ZIP/unzip.c
 $(OBJDIR)/zip.o: Files/ZIP/zip.c
 	@echo $(notdir $<)
 	$(SILENT) $(CC) $(ALL_CFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/DynamicLinker.o: Game/Scripts/DynamicLinker.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Camera.o: Graphics/Cores/Camera/Camera.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
@@ -327,6 +335,9 @@ $(OBJDIR)/DragBorderlessWindow.o: Graphics/Externals/DragBorderlessWindow.cpp
 $(OBJDIR)/ImGUIElement.o: Graphics/Externals/ImGUIElement.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/MiniShader.o: Graphics/Externals/MiniShader.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Model.o: Graphics/Externals/Model.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
@@ -360,6 +371,12 @@ $(OBJDIR)/imgui_widgets.o: ImGUI/imgui_widgets.cpp
 $(OBJDIR)/Input.o: Input/Input.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/MiniAudioSource.o: MiniAudio/MiniAudioSource.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/miniaudio_impl.o: MiniAudio/miniaudio_impl.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Multithreading.o: Multithreading/Multithreading.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
@@ -376,6 +393,9 @@ $(OBJDIR)/StringAPI.o: String/StringAPI.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Color.o: Tools/Color.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
+$(OBJDIR)/Plane.o: Tools/Plane.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(ALL_CXXFLAGS) $(FORCE_INCLUDE) -o "$@" -MF "$(@:%.o=%.d)" -c "$<"
 $(OBJDIR)/Vector.o: Tools/Vector.cpp
