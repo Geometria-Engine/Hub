@@ -15,7 +15,7 @@ struct EngineUpdater
 
 	static void CreateBackupFilesFolder()
 	{
-		std::string backupFilesPath = Files::GetDirectoryOf(Files::GetExecutablePath().c_str()) + "/.BackupFiles";
+		std::string backupFilesPath = Files::GetDirectoryOf(Files::GetExecutablePath().c_str()) + "/BackupFiles";
 
 		if(!Files::DirectoryExists(backupFilesPath.c_str()))
 			Files::CreateDirectory(backupFilesPath.c_str());
@@ -29,7 +29,7 @@ struct EngineUpdater
 
 		for(auto& p: std::experimental::filesystem::recursive_directory_iterator(std::experimental::filesystem::current_path()))
 		{
-			std::string backupFilesPath = Files::GetDirectoryOf(Files::GetExecutablePath().c_str()) + "/.BackupFiles";
+			std::string backupFilesPath = Files::GetDirectoryOf(Files::GetExecutablePath().c_str()) + "/BackupFiles";
 			std::string pathToStr = p.path().u8string();
 
         	if(pathToStr.find(".cpp") != std::string::npos || 
@@ -83,7 +83,7 @@ struct EngineUpdater
 		Files::Write(".gitignore", gitignoreContent);
 
 		system("git update-index --skip-worktree \"BackupGame/\"");
-		system("git update-index --skip-worktree \".BackupFiles/\"");
+		system("git update-index --skip-worktree \"BackupFiles/\"");
 		system("git add *");
 		system("git stash");
 		system("git remote add upstream https://github.com/Geometria-Engine/Geometria.git");
@@ -136,7 +136,7 @@ struct EngineUpdater
 	{
 		std::cout << "Returning Backup Files..." << std::endl;
 
-		std::experimental::filesystem::path backupPathFS = Files::GetDirectoryOf(Files::GetExecutablePath().c_str()) + "\\.BackupFiles";
+		std::experimental::filesystem::path backupPathFS = Files::GetDirectoryOf(Files::GetExecutablePath().c_str()) + "\\BackupFiles";
 		for(auto& p: std::experimental::filesystem::recursive_directory_iterator(backupPathFS))
 		{
 			std::string pathToStr = p.path().u8string();
