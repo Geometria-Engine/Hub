@@ -170,7 +170,7 @@ struct FirstTimeInstaller
 	{
 		std::cout << "Go ahead! Pick a question!" << "\n";
 		std::cout << "\n";
-		std::cout << "1. What is going to install?" << "\n";
+		std::cout << "1. What is it going to install?" << "\n";
 		std::cout << "2. Is there any dependency i'll have to install manually after this?" << "\n";
 		std::cout << "3. What happens after the installation is complete?" << "\n";
 		std::cout << "4. I don't have any questions, feel free to install now." << "\n";
@@ -206,7 +206,7 @@ struct FirstTimeInstaller
 			input = "";
 
 			std::cout << "" << "\n";
-			std::cout << "Q: What is going to install?" << "\n";
+			std::cout << "Q: What is it going to install?" << "\n";
 			std::cout << "\n";
 
 			if(Application::IsPlatform(Application::Platform::Windows))
@@ -602,7 +602,7 @@ struct FirstTimeInstaller
 			std::cout << "\n";
 			std::cout << "\n";
 			std::cout << "=========================\n";
-			std::cout << "WARNING: Once you press any key to continue, \n";
+			std::cout << "WARNING: Once you press Enter to continue, \n";
 			std::cout << "the installer is probably going to ask you for \n";
 			std::cout << "sudo permissions.\n";
 			std::cout << "=========================\n";
