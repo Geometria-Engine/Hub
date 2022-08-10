@@ -224,15 +224,12 @@ struct FirstTimeInstaller
 				std::cout << "A: Since you're on Linux, and it uses " + pkgMgr << "\n";
 				std::cout << "as the package manager, it'll install all of these packages:" << "\n";
 				std::cout << "\n";
-
-				std::vector<std::string> pkgList;
+				
 				if(pkgMgr == "APT")
 				{
-					pkgList = Linux::APTPackageList();
+					for(auto i : Linux::APTPackageList())
+						std::cout << "- " << i << "\n";
 				}
-
-				for(auto i : pkgList)
-					std::cout << "- " << i << "\n";
 
 				std::cout << "\n";
 			}
@@ -339,6 +336,10 @@ struct FirstTimeInstaller
 			}
 			else if(Application::IsPlatform(Application::Linux))
 			{
+				Files::ClearConsole();
+				input = "";
+				MessageBeforeInstalling();
+
 				Linux::InstallPkgs();
 			}
 
@@ -573,6 +574,8 @@ struct FirstTimeInstaller
 			apt.push_back("openssl");
 			apt.push_back("libssl-dev");
 			apt.push_back("libcurl4-openssl-dev");
+
+			return apt;
 		}
 
 		static std::string PkgListToString(std::vector<std::string> v)
