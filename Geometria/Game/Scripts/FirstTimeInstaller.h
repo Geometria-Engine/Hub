@@ -275,11 +275,10 @@ struct FirstTimeInstaller
 			std::cout << "Q: What happens after the installation is complete?" << "\n";
 			std::cout << "\n";
 			std::cout << "A: After the installation is complete, it'll inform you" << "\n";
-			std::cout << "that finished successfully (obviously) and ask you if you" << "\n";
-			std::cout << "want to execute the Hub GUI, feel free to say yes or no." << "\n";
+			std::cout << "that finished successfully and exit afterwards." << "\n";
 			std::cout << "\n";
-			std::cout << "Remember that this executable IS the toolkit, so to open up" << "\n";
-			std::cout << "the GUI, you have to open this up again." << "\n";
+			std::cout << "If you wanna start using the toolkit, you open this" << "\n";
+			std::cout << "executable again, and it'll open in its GUI mode." << "\n";
 			std::cout << "\n";
 			Files::PauseConsole();
 
@@ -469,7 +468,12 @@ struct FirstTimeInstaller
 		{
 			std::cout << "All right, now sit back, relax, get a cup of coffee or tea..." << "\n";
 			std::cout << "\n";
-			std::cout << "After you press any key to continue, it'll install everything" << "\n";
+
+			if(Application::IsPlatform(Application::Windows))
+				std::cout << "After you press any key to continue, it'll install everything" << "\n";
+			else if(Application::IsPlatform(Application::Linux))
+				std::cout << "After you press Enter to continue, it'll install everything" << "\n";
+
 			std::cout << "and take care of the rest." << "\n";
 			Files::PauseConsole();
 		}
