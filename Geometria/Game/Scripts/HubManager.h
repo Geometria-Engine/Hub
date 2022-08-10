@@ -284,6 +284,24 @@ struct HubManager : public ScriptBehaviour
 					}
 				}
 			}
+			else if(Application::IsPlatform(Application::Linux))
+			{
+				Files::ClearConsole();
+				if(status != nullptr)
+					status->text = "Creating \"" + projectName + "\"...\n(See Console for more info...)";
+
+				std::cout << "Creating \"" + projectName + "\"\n";
+				currentUrl = finalUrl;
+				currentProjectName = projectName;
+
+				Files::CreateDirectory(finalUrl.c_str());
+				
+				if (!isGitThreadSpawned && !isFromCommandLine)
+				{
+					Multithreading::RunThread([&] {GitClone(); });
+					isGitThreadSpawned = true;
+				}
+			}
 		}
 	}
 };
