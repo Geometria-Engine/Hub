@@ -87,7 +87,7 @@ struct EngineUpdater
 		system("git add *");
 		system("git stash");
 		system("git remote add upstream https://github.com/Geometria-Engine/Geometria.git");
-		system("git pull upstream main");
+		system("git pull upstream main --allow-unrelated-histories");
 		system("git remote rm upstream");
 
 		if(Application::IsPlatform(Application::Windows))

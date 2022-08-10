@@ -24,7 +24,7 @@ struct FirstTimeInstaller
 		std::cout << "Hello! Welcome to \"Geometria Hub\"!" << "\n";
 		std::cout << "The official Toolkit for the \"Geometria Engine\"!" << "\n";
 		std::cout << "\n";
-		system("pause");
+		Files::PauseConsole();
 
 		Files::ClearConsole();
 		input = "";
@@ -32,7 +32,7 @@ struct FirstTimeInstaller
 		std::cout << "the program thinks this is the first time use" << "\n";
 		std::cout << "on this computer." << "\n";
 		std::cout << "\n";
-		system("pause");
+		Files::PauseConsole();
 
 		Files::ClearConsole();
 		input = "";
@@ -161,7 +161,7 @@ struct FirstTimeInstaller
 
 		std::cout << "Have a nice day! :D" << "\n";
 		std::cout << "\n";
-		system("pause");
+		Files::PauseConsole();
 
 		exit(0);
 	}
@@ -186,7 +186,7 @@ struct FirstTimeInstaller
 		else if(input == "3")
 			InstallQuestions::ThirdQuestion();
 		else if(input == "4")
-			Installer::MessageBeforeSetup();
+			Installer::Install();
 		else
 		{
 			Files::ClearConsole();
@@ -218,6 +218,24 @@ struct FirstTimeInstaller
 				std::cout << "- Git." << "\n";
 				std::cout << "\n";
 			}
+			else if(Application::IsPlatform(Application::Platform::Linux))
+			{
+				std::string pkgMgr = Linux::GetPkgManagerName();
+				std::cout << "A: Since you're on Linux, and it uses " + pkgMgr << "\n";
+				std::cout << "as the package manager, it'll install all of these packages:" << "\n";
+				std::cout << "\n";
+
+				std::vector<std::string> pkgList;
+				if(pkgMgr == "APT")
+				{
+					pkgList = Linux::APTPackageList();
+				}
+
+				for(auto i : pkgList)
+					std::cout << "- " << i << "\n";
+
+				std::cout << "\n";
+			}
 
 			std::cout << "The toolkit doesn't need any installation process, in fact" << "\n";
 			std::cout << "you're using the toolkit right now! So after installation, you can open" << "\n";
@@ -227,7 +245,7 @@ struct FirstTimeInstaller
 			std::cout << "your PC, it'll check if that's true and skip the process" << "\n";
 			std::cout << "to save time." << "\n";
 			std::cout << "\n";
-			system("pause");
+			Files::PauseConsole();
 
 			Files::ClearConsole();
 			input = "";
@@ -245,7 +263,7 @@ struct FirstTimeInstaller
 			std::cout << "you don't have to install anything after completing this!" << "\n";
 			std::cout << "Once its done, you can start using the tools and the engine right away!" << "\n";
 			std::cout << "\n";
-			system("pause");
+			Files::PauseConsole();
 
 			Files::ClearConsole();
 			input = "";
@@ -266,7 +284,7 @@ struct FirstTimeInstaller
 			std::cout << "Remember that this executable IS the toolkit, so to open up" << "\n";
 			std::cout << "the GUI, you have to open this up again." << "\n";
 			std::cout << "\n";
-			system("pause");
+			Files::PauseConsole();
 
 			Files::ClearConsole();
 			input = "";
@@ -278,46 +296,50 @@ struct FirstTimeInstaller
 	{
 		static void MessageBeforeSetup()
 		{
-			Files::ClearConsole();
-			input = "";
-
 			std::cout << "All right, just two steps more before installation!" << "\n";
 			std::cout << "After you press any key to continue, it'll start with" << "\n";
 			std::cout << "simple setups of the tools it needs to install." << "\n";
-			system("pause");
-
-			Files::ClearConsole();
-			input = "";
-			Install();
+			Files::PauseConsole();
 		}
 
 		static void Install()
 		{
 			std::string getVSDrive, getVSPath;
 
-			Files::ClearConsole();
-			input = "";
-			AskForDrive(getVSDrive);
-
-			Files::ClearConsole();
-			input = "";
-			VS_PathInstallOptions(getVSDrive, getVSPath);
-
-			Files::ClearConsole();
-			input = "";
-			CheckForGit();
-
-			Files::ClearConsole();
-			input = "";
-			MessageBeforeInstalling();
-
-			Files::ClearConsole();
-			input = "";
-			InstallVisualCPlusPlus(getVSPath);
-
-			if(downloadGitInstaller)
+			if(Application::IsPlatform(Application::Windows))
 			{
-				InstallGit();
+				Files::ClearConsole();
+				input = "";
+				MessageBeforeSetup();
+	
+				Files::ClearConsole();
+				input = "";
+				AskForDrive(getVSDrive);
+	
+				Files::ClearConsole();
+				input = "";
+				VS_PathInstallOptions(getVSDrive, getVSPath);
+	
+				Files::ClearConsole();
+				input = "";
+				CheckForGit();
+	
+				Files::ClearConsole();
+				input = "";
+				MessageBeforeInstalling();
+	
+				Files::ClearConsole();
+				input = "";
+				InstallVisualCPlusPlus(getVSPath);
+	
+				if(downloadGitInstaller)
+				{
+					InstallGit();
+				}
+			}
+			else if(Application::IsPlatform(Application::Linux))
+			{
+				Linux::InstallPkgs();
 			}
 
 			InstallationFinish();
@@ -448,7 +470,7 @@ struct FirstTimeInstaller
 			std::cout << "\n";
 			std::cout << "After you press any key to continue, it'll install everything" << "\n";
 			std::cout << "and take care of the rest." << "\n";
-			system("pause");
+			Files::PauseConsole();
 		}
 
 		static void InstallVisualCPlusPlus(std::string vsPath)
@@ -477,7 +499,7 @@ struct FirstTimeInstaller
 				std::cout << "=========================\n";
 				std::cout << "\n";
 				std::cout << "\n";
-				system("pause");
+				Files::PauseConsole();
 				system(fullCmd.c_str());
 			}
 		}
@@ -508,7 +530,7 @@ struct FirstTimeInstaller
 			std::cout << "\n";
 			std::cout << "\n";
 
-			system("pause");
+			Files::PauseConsole();
 
 			Files::OpenProgram("git-installer.exe");
 
@@ -518,7 +540,7 @@ struct FirstTimeInstaller
 			std::cout << "with the \"Git for Windows\" installation." << "\n";
 			std::cout << "\n";
 
-			system("pause");
+			Files::PauseConsole();
 		}
 
 		static void InstallationFinish()
@@ -529,7 +551,66 @@ struct FirstTimeInstaller
 			std::cout << "Open this program again to start using Geometria." << "\n";
 			std::cout << "\n";
 			std::cout << "Thank you for choosing Geometria and have fun creating! :D" << "\n";
-			system("pause");
+			Files::PauseConsole();
+		}
+	};
+
+	struct Linux
+	{
+		static std::vector<std::string> APTPackageList()
+		{
+			std::vector<std::string> apt;
+			apt.push_back("git");
+			apt.push_back("make");
+			apt.push_back("build-essential");
+			apt.push_back("gcc");
+			apt.push_back("gcc-multilib");
+			apt.push_back("g++gcc-multilib");
+			apt.push_back("libx11-dev");
+			apt.push_back("libgl1-mesa-dev");
+			apt.push_back("xorg-dev");
+			apt.push_back("libglu1-mesa-dev");
+			apt.push_back("openssl");
+			apt.push_back("libssl-dev");
+			apt.push_back("libcurl4-openssl-dev");
+		}
+
+		static std::string PkgListToString(std::vector<std::string> v)
+		{
+			std::string s;
+			for(auto i : v)
+			{
+				s += " " + i;
+			}
+
+			return s;
+		}
+
+		static std::string GetPkgManagerName()
+		{
+			if(Files::WhereIs("apt") != "")
+				return "APT";
+		}
+
+		static void InstallPkgs()
+		{
+			std::string cmd = "";
+
+			std::cout << "\n";
+			std::cout << "\n";
+			std::cout << "=========================\n";
+			std::cout << "WARNING: Once you press any key to continue, \n";
+			std::cout << "the installer is probably going to ask you for \n";
+			std::cout << "sudo permissions.\n";
+			std::cout << "=========================\n";
+			std::cout << "\n";
+			std::cout << "\n";
+			Files::PauseConsole();
+
+			if(Files::WhereIs("apt") != "")
+				cmd = "sudo apt install" + PkgListToString(APTPackageList());
+
+			system(cmd.c_str());
 		}
 	};
 
