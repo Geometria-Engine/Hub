@@ -230,6 +230,11 @@ struct FirstTimeInstaller
 					for(auto i : Linux::APTPackageList())
 						std::cout << "- " << i << "\n";
 				}
+				else if(pkgMgr == "Pacman")
+				{
+					for(auto i : Linux::PacmanPackageList())
+						std::cout << "- " << i << "\n";
+				}
 
 				std::cout << "\n";
 			}
@@ -582,6 +587,16 @@ struct FirstTimeInstaller
 			return apt;
 		}
 
+		static std::vector<std::string> PacmanPackageList()
+		{
+			std::vector<std::string> pacman;
+			pacman.push_back("git");
+			pacman.push_back("base-devel");
+			pacman.push_back("glu");
+
+			return pacman;
+		}
+
 		static std::string PkgListToString(std::vector<std::string> v)
 		{
 			std::string s;
@@ -597,6 +612,8 @@ struct FirstTimeInstaller
 		{
 			if(Files::WhereIs("apt") != "")
 				return "APT";
+			else if(Files::WhereIs("pacman") != "")
+				return "Pacman";
 		}
 
 		static void InstallPkgs()
@@ -616,6 +633,8 @@ struct FirstTimeInstaller
 
 			if(Files::WhereIs("apt") != "")
 				cmd = "sudo apt install" + PkgListToString(APTPackageList());
+			else if(Files::WhereIs("pacman") != "")
+				cmd = "sudo pacman -S" + PkgListToString(PacmanPackageList());
 
 			system(cmd.c_str());
 		}
