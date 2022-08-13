@@ -270,9 +270,17 @@ void RendererCore::OpenGL_Start_DrawCall(DrawCall& d)
 		std::cout << "Starting Draw Call " << d.id << " (OpenGL Version: " << glGetString(GL_VERSION) << ")" << std::endl;
 		SetUpWorldMatrix(d);
 
+		std::vector<ShaderAttrLocation> s;
+		s.push_back(ShaderAttrLocation(0, "vertex_position"));
+		s.push_back(ShaderAttrLocation(1, "vertex_color"));
+		s.push_back(ShaderAttrLocation(2, "miniShaderId"));
+		s.push_back(ShaderAttrLocation(3, "vertex_uv"));
+		s.push_back(ShaderAttrLocation(4, "textureIndex"));
+
 		d.mainShader = new Shader(
 			MiniShader::RewriteForShaderVersion(Files::Read("EngineResources/basic.vert"), 1.30f, false),
-			MiniShader::RewriteForShaderVersion(Files::Read("EngineResources/basic.frag"), 1.30f, true));
+			MiniShader::RewriteForShaderVersion(Files::Read("EngineResources/basic.frag"), 1.30f, true),
+			s);
 
 		uint32_t indSize = 600000;
 		d.allIndices.resize(indSize);
@@ -297,26 +305,26 @@ void RendererCore::OpenGL_Start_DrawCall(DrawCall& d)
 		glBindVertexArray(d.VAO);
 
 		glBindBuffer(GL_ARRAY_BUFFER, d.VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex), NULL, GL_STREAM_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex), NULL, GL_DYNAMIC_DRAW);
 		//glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, d.EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, d.allIndices.size() * sizeof(uint32_t), &d.allIndices[0], GL_DYNAMIC_DRAW);
 		//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
 
-		if (Application::IsPlatform(Application::Platform::Windows))
-		{
-			if (Graphics::IsIntelGPU())
-				SetVAttr_IntelWindows(d);
-			else if (Graphics::IsAMDGPU())
-				SetVAttr_AMDWindows(d);
-			else
-				SetVAttr_Universal(d);
-		}
-		else
-		{
+		//if (Application::IsPlatform(Application::Platform::Windows))
+		//{
+		//	if (Graphics::IsIntelGPU())
+		//		SetVAttr_IntelWindows(d);
+		//	else if (Graphics::IsAMDGPU())
+		//		SetVAttr_AMDWindows(d);
+		//	else
+		//		SetVAttr_Universal(d);
+		//}
+		//else
+		//{
 			SetVAttr_Universal(d);
-		}
+		//}
 	}
 
 	if (d.type == DrawCall::Type::UI)
@@ -367,27 +375,34 @@ void RendererCore::SetVAttr_AMDWindows(DrawCall& d)
 	// Differences with Universal:
 	// - To be honest, i don't fucking know what the fuck the AMD Windows Drivers even want at this point
 
+	// Vertex Position
+	// 3
+	glVertexAttribPointer(pointerPosition, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+	glEnableVertexAttribArray(pointerPosition);
+	pointerPosition++;
+
 	// Texture Group ID
+	// 1
 	glVertexAttribPointer(pointerPosition, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, textureGroupId));
 	glEnableVertexAttribArray(pointerPosition);
 	pointerPosition++;
 
 	// Color
+	// 2
 	glVertexAttribPointer(pointerPosition, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
 	glEnableVertexAttribArray(pointerPosition);
 	pointerPosition++;
 
-	// Vertex Position
-	glVertexAttribPointer(pointerPosition, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
-	glEnableVertexAttribArray(pointerPosition);
-	pointerPosition++;
-
 	// Texture UV Coordinates
+	// 4
 	glVertexAttribPointer(pointerPosition, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoords));
 	glEnableVertexAttribArray(pointerPosition);
 	pointerPosition++;
 
-	// TODO: Add Mini Shaders
+	// Mini Shader ID
+	glVertexAttribPointer(pointerPosition, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, miniShaderId));
+	glEnableVertexAttribArray(pointerPosition);
+	pointerPosition++;
 
 	glBindVertexArray(0);
 }
@@ -910,12 +925,13 @@ void RendererCore::OpenGL_Render()
 					{
 						if (d.type == DrawCall::Type::Dynamic || d.type == DrawCall::Type::UI)
 						{
-							glBufferData(GL_ARRAY_BUFFER, d.allVerts.size() * sizeof(Vertex), NULL, GL_STREAM_DRAW);
-							d.bufferPointer = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+							glBufferData(GL_ARRAY_BUFFER, d.allVerts.size() * sizeof(Vertex), d.allVerts.data(), GL_DYNAMIC_DRAW);
+							//glBufferData(GL_ARRAY_BUFFER, d.allVerts.size() * sizeof(Vertex), NULL, GL_DYNAMIC_DRAW);
+							//d.bufferPointer = (Vertex*)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 							d._lastVertCount = d.allVerts.size();
 
-							memcpy(d.bufferPointer, &d.allVerts[0], d.allVerts.size() * sizeof(Vertex));
-							glUnmapBuffer(GL_ARRAY_BUFFER);
+							//memcpy(d.bufferPointer, &d.allVerts[0], d.allVerts.size() * sizeof(Vertex));
+							//glUnmapBuffer(GL_ARRAY_BUFFER);
 						}
 						else if (d.type == DrawCall::Type::Hybrid || d.type == DrawCall::Type::Object)
 						{
@@ -929,15 +945,25 @@ void RendererCore::OpenGL_Render()
 					{
 						if (d.type == DrawCall::Type::Dynamic || d.type == DrawCall::Type::UI)
 						{
+							std::vector<Vertex> modifiedVerts;
+
 							int vertSize = d.modifyVerticesArray.size();
 							if (vertSize != 0)
 							{
 								for (int m = 0; m < vertSize; m++)
 								{
 									for (int i = d.modifyVerticesArray[m][0]; i < d.modifyVerticesArray[m][1]; i++)
-										d.bufferPointer[i] = d.allVerts[i];
+									{
+										modifiedVerts.push_back(d.allVerts[i]);
+										//d.bufferPointer[i] = d.allVerts[i];
+									}
+
+									glBufferSubData(GL_ARRAY_BUFFER, d.modifyVerticesArray[m][0] * sizeof(Vertex), (d.modifyVerticesArray[m][1] - d.modifyVerticesArray[m][0]) * sizeof(Vertex), modifiedVerts.data());
 								}
 							}
+							//std::cout << "=============" << std::endl;
+							//std::cout << d.allVerts.data() << std::endl;
+							//std::cout << "=============" << std::endl;
 						}
 						else if (d.type == DrawCall::Type::Hybrid && d.updateHybrid == true)
 						{

@@ -157,7 +157,7 @@ int main(int argc, char** argv)
         }
         else if(commandLine == "--version")
         {
-            std::cout << "0.2.41" << std::endl;
+            std::cout << "0.2.42" << std::endl;
         }
         else if(commandLine == "--macro-test")
         {

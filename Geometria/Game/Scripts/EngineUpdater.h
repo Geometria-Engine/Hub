@@ -71,31 +71,21 @@ struct EngineUpdater
 
 	static void GitPullFromMainRepo()
 	{
-		std::cout << "Updating Engine from Git..." << std::endl;
+		std::cout << "Updating Engine from Git... This can take a while..." << std::endl;
 
-		std::string gitignoreContent = Files::Read(".gitignore");
+		if(!std::experimental::filesystem::exists("engineupdate.zip"))
+		{
+			std::string zipContent = Web::Get("https://github.com/Geometria-Engine/Geometria/archive/refs/heads/main.zip", true);
+			Files::Write("engineupdate.zip", zipContent, true);
+		}
 
-		if(Application::IsPlatform(Application::Windows))
-			gitignoreContent = StringAPI::ReplaceAll(gitignoreContent, "!geo.exe", "geo.exe");
-		else if(Application::IsPlatform(Application::Linux))
-			gitignoreContent = StringAPI::ReplaceAll(gitignoreContent, "!geo", "geo");
+		std::cout << "Installing Engine..." << std::endl;
 
-		Files::Write(".gitignore", gitignoreContent);
+		std::string zipPath = Files::GetDirectoryOf(Files::GetExecutablePath().c_str()) + "/engineupdate.zip";
+		std::cout << zipPath << std::endl;
+		Files::UnZIP(zipPath.c_str(), "/Geometria-main");
 
-		system("git update-index --skip-worktree \"BackupGame/\"");
-		system("git update-index --skip-worktree \"BackupFiles/\"");
-		system("git add *");
-		system("git stash");
-		system("git remote add upstream https://github.com/Geometria-Engine/Geometria.git");
-		system("git pull upstream main --allow-unrelated-histories");
-		system("git remote rm upstream");
-
-		if(Application::IsPlatform(Application::Windows))
-			gitignoreContent = StringAPI::ReplaceAll(gitignoreContent, "geo.exe", "!geo.exe");
-		else if(Application::IsPlatform(Application::Linux))
-			gitignoreContent = StringAPI::ReplaceAll(gitignoreContent, "geo", "!geo");
-		
-		Files::Write(".gitignore", gitignoreContent);
+		Files::Remove("engineupdate.zip");
 
 		std::cout << "Update done!" << std::endl;
 	}
@@ -136,7 +126,7 @@ struct EngineUpdater
 	{
 		std::cout << "Returning Backup Files..." << std::endl;
 
-		std::experimental::filesystem::path backupPathFS = Files::GetDirectoryOf(Files::GetExecutablePath().c_str()) + "\\BackupFiles";
+		std::experimental::filesystem::path backupPathFS = Files::GetDirectoryOf(Files::GetExecutablePath().c_str()) + "/BackupFiles";
 		for(auto& p: std::experimental::filesystem::recursive_directory_iterator(backupPathFS))
 		{
 			std::string pathToStr = p.path().u8string();

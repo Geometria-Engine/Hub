@@ -47,6 +47,8 @@ public:
 	static void SetCursor();
 	static void GetFrameBuffer();
 	static void SetResizeCall();
+	static void SetWindowTitle(const char* title);
+	static void SetWindowIcon(const char* icon_path);
 	static bool VSync;
 
 	static void SetResolution(Vector2 resolution)

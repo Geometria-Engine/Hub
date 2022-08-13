@@ -191,6 +191,28 @@ void Graphics::SetResizeCall()
 	}
 }
 
+void Graphics::SetWindowTitle(const char* title)
+{
+	//==[ OPENGL ]==//
+	{
+		glfwSetWindowTitle(_currentWindow.openGLWindow, title);
+	}
+}
+
+void Graphics::SetWindowIcon(const char* image_path)
+{
+	// Loading the image
+	GLFWimage image[1];
+
+	std::vector<unsigned char> img_data = Files::GetImageData(image_path, image[0].width, image[0].height);
+
+	image[0].pixels = img_data.data();
+
+	//==[ OPENGL ]==//
+	{
+		glfwSetWindowIcon(_currentWindow.openGLWindow, 1, image);
+	}
+}
 
 void Graphics::EnableDraggableBorderless()
 {
