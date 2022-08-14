@@ -11,9 +11,18 @@ struct FirstTimeInstaller
 	static bool makeFirstTimeFile;
 	static bool downloadGitInstaller;
 
+	static std::string pkgMgr;
+
 	static void Start()
 	{
+		GetVariables();
 		Introduction();
+	}
+
+	static void GetVariables()
+	{
+		pkgMgr = Linux::GetPkgManagerName();
+		Files::ClearConsole();
 	}
 
 	static void Introduction()
@@ -220,17 +229,16 @@ struct FirstTimeInstaller
 			}
 			else if(Application::IsPlatform(Application::Platform::Linux))
 			{
-				std::string pkgMgr = Linux::GetPkgManagerName();
-				std::cout << "A: Since you're on Linux, and it uses " + pkgMgr << "\n";
+				std::cout << "A: Since you're on Linux, and it uses " + FirstTimeInstaller::pkgMgr << "\n";
 				std::cout << "as the package manager, it'll install all of these packages:" << "\n";
 				std::cout << "\n";
 				
-				if(pkgMgr == "APT")
+				if(FirstTimeInstaller::pkgMgr == "APT")
 				{
 					for(auto i : Linux::APTPackageList())
 						std::cout << "- " << i << "\n";
 				}
-				else if(pkgMgr == "Pacman")
+				else if(FirstTimeInstaller::pkgMgr == "Pacman")
 				{
 					for(auto i : Linux::PacmanPackageList())
 						std::cout << "- " << i << "\n";
