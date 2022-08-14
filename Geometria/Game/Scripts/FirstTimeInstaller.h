@@ -21,7 +21,11 @@ struct FirstTimeInstaller
 
 	static void GetVariables()
 	{
-		pkgMgr = Linux::GetPkgManagerName();
+		if(Application::IsPlatform(Application::Linux))
+		{
+			pkgMgr = Linux::GetPkgManagerName();
+		}
+
 		Files::ClearConsole();
 	}
 
