@@ -143,10 +143,7 @@ struct FirstTimeInstaller
 		}
 		else if(input == "no")
 		{
-			if(Application::IsPlatform(Application::Windows))
-				Installer::MessageBeforeSetup();
-			else if(Application::IsPlatform(Application::Linux))
-				Installer::MessageBeforeInstalling();
+			Installer::Install();
 		}
 		else
 		{
