@@ -142,7 +142,12 @@ struct FirstTimeInstaller
 			ShowQuestions();
 		}
 		else if(input == "no")
-			Installer::MessageBeforeSetup();
+		{
+			if(Application::IsPlatform(Application::Windows))
+				Installer::MessageBeforeSetup();
+			else if(Application::IsPlatform(Application::Linux))
+				Installer::MessageBeforeInstalling();
+		}
 		else
 		{
 			Files::ClearConsole();
@@ -626,6 +631,8 @@ struct FirstTimeInstaller
 				return "APT";
 			else if(Files::WhereIs("pacman") != "")
 				return "Pacman";
+
+			return "";
 		}
 
 		static void InstallPkgs()
@@ -649,6 +656,8 @@ struct FirstTimeInstaller
 				cmd = "sudo pacman -S" + PkgListToString(PacmanPackageList());
 
 			system(cmd.c_str());
+			std::cout << "Installation Complete!" << std::endl;
+			Files::PauseConsole();
 		}
 	};
 
