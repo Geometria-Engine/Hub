@@ -19,7 +19,7 @@ endif
 # #############################################
 
 RESCOMP = windres
-DEFINES += -DN_FSEEKO -D_WINDOWS
+DEFINES += -DN_FSEEKO -DHAVE_UNISTD_H
 INCLUDES +=
 FORCE_INCLUDE +=
 ALL_CPPFLAGS += $(CPPFLAGS) -MMD -MP $(DEFINES) $(INCLUDES)
@@ -36,7 +36,7 @@ endef
 
 ifeq ($(config),release_x86_64)
 TARGETDIR = bin/x86_64/Release
-TARGET = $(TARGETDIR)/zlib.lib
+TARGET = $(TARGETDIR)/libzlib.a
 OBJDIR = obj/x86_64
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -w
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -w
@@ -44,7 +44,7 @@ ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
 
 else ifeq ($(config),release_x86)
 TARGETDIR = bin/x86/Release
-TARGET = $(TARGETDIR)/zlib.lib
+TARGET = $(TARGETDIR)/libzlib.a
 OBJDIR = obj/x86
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -w
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -w

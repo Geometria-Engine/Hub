@@ -36,7 +36,7 @@ endef
 
 ifeq ($(config),release_x86_64)
 TARGETDIR = bin/x86_64/Release
-TARGET = $(TARGETDIR)/yaml-cpp.lib
+TARGET = $(TARGETDIR)/libyaml-cpp.a
 OBJDIR = obj/x86_64
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -w
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m64 -O2 -w
@@ -44,7 +44,7 @@ ALL_LDFLAGS += $(LDFLAGS) -L/usr/lib64 -m64 -s
 
 else ifeq ($(config),release_x86)
 TARGETDIR = bin/x86/Release
-TARGET = $(TARGETDIR)/yaml-cpp.lib
+TARGET = $(TARGETDIR)/libyaml-cpp.a
 OBJDIR = obj/x86
 ALL_CFLAGS += $(CFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -w
 ALL_CXXFLAGS += $(CXXFLAGS) $(ALL_CPPFLAGS) -m32 -O2 -w

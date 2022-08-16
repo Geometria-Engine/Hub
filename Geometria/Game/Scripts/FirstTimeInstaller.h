@@ -12,6 +12,7 @@ struct FirstTimeInstaller
 	static bool downloadGitInstaller;
 
 	static std::string pkgMgr;
+	static std::string linuxDistro;
 
 	static void Start()
 	{
@@ -24,6 +25,7 @@ struct FirstTimeInstaller
 		if(Application::IsPlatform(Application::Linux))
 		{
 			pkgMgr = Linux::GetPkgManagerName();
+			linuxDistro = Application::GetLinuxDistro();
 		}
 
 		Files::ClearConsole();
@@ -235,7 +237,7 @@ struct FirstTimeInstaller
 			}
 			else if(Application::IsPlatform(Application::Platform::Linux))
 			{
-				std::cout << "A: Since you're on Linux, and it uses " + FirstTimeInstaller::pkgMgr << "\n";
+				std::cout << "A: Since you're on " << FirstTimeInstaller::linuxDistro << ", and it uses " + FirstTimeInstaller::pkgMgr << "\n";
 				std::cout << "as the package manager, it'll install all of these packages:" << "\n";
 				std::cout << "\n";
 				
@@ -589,7 +591,6 @@ struct FirstTimeInstaller
 			apt.push_back("build-essential");
 			apt.push_back("gcc");
 			apt.push_back("gcc-multilib");
-			apt.push_back("g++gcc-multilib");
 			apt.push_back("libx11-dev");
 			apt.push_back("libgl1-mesa-dev");
 			apt.push_back("xorg-dev");
@@ -648,7 +649,9 @@ struct FirstTimeInstaller
 			Files::PauseConsole();
 
 			if(Files::WhereIs("apt") != "")
+			{
 				cmd = "sudo apt install" + PkgListToString(APTPackageList());
+			}
 			else if(Files::WhereIs("pacman") != "")
 				cmd = "sudo pacman -S" + PkgListToString(PacmanPackageList());
 

@@ -23,7 +23,7 @@ bool HubManager::defaultValuesAdded = false;
 ImGUIElement* HubManager::win;
 ImGUIElement* HubManager::status;
 
-std::string FirstTimeInstaller::input, FirstTimeInstaller::pkgMgr;
+std::string FirstTimeInstaller::input, FirstTimeInstaller::pkgMgr, FirstTimeInstaller::linuxDistro;
 bool FirstTimeInstaller::makeFirstTimeFile;
 bool FirstTimeInstaller::downloadGitInstaller;
 
