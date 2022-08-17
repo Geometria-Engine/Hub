@@ -648,11 +648,9 @@ struct FirstTimeInstaller
 			std::cout << "\n";
 			Files::PauseConsole();
 
-			if(Files::WhereIs("apt") != "")
-			{
+			if(FirstTimeInstaller::pkgMgr == "APT")
 				cmd = "sudo apt install" + PkgListToString(APTPackageList());
-			}
-			else if(Files::WhereIs("pacman") != "")
+			else if(FirstTimeInstaller::pkgMgr == "Pacman")
 				cmd = "sudo pacman -S" + PkgListToString(PacmanPackageList());
 
 			system(cmd.c_str());
