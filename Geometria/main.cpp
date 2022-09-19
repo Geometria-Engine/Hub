@@ -9,6 +9,7 @@
 #include "Game/Scripts/EngineUpdater.h"
 #include "Game/Scripts/ToolkitUpdater.h"
 #include "Game/Scripts/FirstTimeInstaller.h"
+#include "Game/Scripts/Debugger/Debugger.h"
 
 DONT_UPDATE_FILE()
 
@@ -27,31 +28,57 @@ std::string FirstTimeInstaller::input, FirstTimeInstaller::pkgMgr, FirstTimeInst
 bool FirstTimeInstaller::makeFirstTimeFile;
 bool FirstTimeInstaller::downloadGitInstaller;
 
-void Main_Compile()
+void Run_Debugger()
 {
-    if (Application::IsPlatform(Application::Windows))
+    Debugger::RunLLDB();
+}
+
+void Main_Compile(std::string variable)
+{
+    bool unknownValue = false;
+
+    if(variable == "debug")
+        std::cout << "Compiling [Debug]..." << std::endl;
+    else if(variable == "" || variable == "release")
+        std::cout << "Compiling [Release]..." << std::endl;
+    else
     {
-        //TODO: Add dynamic linker.
+        std::cout << "ERROR: Unknown second parameter." << std::endl;
+        unknownValue = true;
+    }
 
-        //DynamicLinker::Link();
-
-        std::string getMSBuild = Files::GetPathFromCommand(Files::ConvertToWindowsCmdPath("C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe") + " -latest -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -find MSBuild/**/Bin/MSBuild.exe");
-        std::string visualStudioVersion = Files::GetValueFromCommand(Files::ConvertToWindowsCmdPath("C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe") + " -latest -prerelease -products * -property productLineVersion");
-        std::string premakeCmd = "premake5-windows.exe vs" + visualStudioVersion;
-
-        if (getMSBuild != "")
+    if(!unknownValue)
+    {
+        if(variable == "debug")
+            Debugger::ReadCPPandHFiles(false);
+    
+        if (Application::IsPlatform(Application::Windows))
         {
-            system(premakeCmd.c_str());
-            system(Files::ConvertToWindowsCmdPath(getMSBuild).c_str());
+            //TODO: Add dynamic linker.
+    
+            //DynamicLinker::Link();
+    
+            std::string getMSBuild = Files::GetPathFromCommand(Files::ConvertToWindowsCmdPath("C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe") + " -latest -prerelease -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -find MSBuild/**/Bin/MSBuild.exe");
+            std::string visualStudioVersion = Files::GetValueFromCommand(Files::ConvertToWindowsCmdPath("C:/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe") + " -latest -prerelease -products * -property productLineVersion");
+            std::string premakeCmd = "premake5-windows.exe vs" + visualStudioVersion;
+    
+            if (getMSBuild != "")
+            {
+                system(premakeCmd.c_str());
+                system(Files::ConvertToWindowsCmdPath(getMSBuild).c_str());
+                std::cout << "Project Compiled!" << std::endl;
+            }
+        }
+        else if(Application::IsPlatform(Application::Linux))
+        {
+            system("chmod -R 777 premake5-linux");
+            system("./premake5-linux gmake2");
+            system("make");
             std::cout << "Project Compiled!" << std::endl;
         }
-    }
-    else if(Application::IsPlatform(Application::Linux))
-    {
-	system("chmod -R 777 premake5-linux");
-	system("./premake5-linux gmake2");
-	system("make");
-	std::cout << "Project Compiled!" << std::endl;
+    
+        if(variable == "debug")
+            Debugger::Cleanup();
     }
 }
 
@@ -70,8 +97,11 @@ int main(int argc, char** argv)
             Graphics::BypassIntel(true);
         else if (commandLine == "--compile")
         {
-            std::cout << "Compiling..." << std::endl;
-            Main_Compile();
+            std::string second;
+            if(i + 1 < argc)
+                second = argv[i + 1];
+
+            Main_Compile(second);
             exit(0);
         }
         else if(commandLine == "--path-compiler")
@@ -84,9 +114,7 @@ int main(int argc, char** argv)
         else if(commandLine == "--run")
         {
             std::cout << "Running..." << std::endl;
-            Main_Compile();
-            Files::ChangeCurrentDirectory("Geometria");
-            Files::OpenProgram("Geometria.exe");
+            Run_Debugger();
             exit(0);
         }
         else if(commandLine == "--update-engine")
@@ -157,7 +185,7 @@ int main(int argc, char** argv)
         }
         else if(commandLine == "--version")
         {
-            std::cout << "0.2.43" << std::endl;
+            std::cout << "0.2.5" << std::endl;
         }
         else if(commandLine == "--macro-test")
         {
