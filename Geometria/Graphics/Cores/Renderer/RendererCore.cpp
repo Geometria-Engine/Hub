@@ -11,6 +11,7 @@
 #include "../../Externals/SceneAndDrawCall.h"
 #include "../../../Application/Application.h"
 #include "Multithreading/Multithreading.h"
+#include "Graphics/Cores/iGUI/iGUI.h"
 
 
 //uint32_t RendererCore::VAO, RendererCore::VBO, RendererCore::EBO, RendererCore::reveal_texture, RendererCore::rbo_depth, RendererCore::accum_texture, RendererCore::oit_fbo, RendererCore::colorNT_texture;
@@ -68,12 +69,14 @@ void RendererCore::AddModel(Model& m, DrawCall& d)
 
 		if (m.texture != nullptr)
 		{
-			m.vertices[i].textureGroupId = m.texture->texGroupId;
+			float x, y, width, height;
 
-			float x = (float)m.texture->finalRect.x,
-				y = (float)m.texture->finalRect.y,
-				width = (float)m.texture->finalRect.x + (float)m.texture->finalRect.width,
-				height = (float)m.texture->finalRect.y + (float)m.texture->finalRect.height;
+			x = (float)m.texture->finalRect.x;
+			y = (float)m.texture->finalRect.y;
+			width = (float)m.texture->finalRect.x + (float)m.texture->finalRect.width;
+			height = (float)m.texture->finalRect.y + (float)m.texture->finalRect.height;
+
+			m.vertices[i].textureGroupId = m.texture->texGroupId;
 
 			if (m.flipXTexture)
 				std::swap(x, width);
@@ -132,6 +135,29 @@ void RendererCore::AddModel(Model& m, DrawCall& d)
 	//m.PrintData();
 }
 
+void RendererCore::DisableModel(Model& d)
+{
+	if(!d.isModelDisabled)
+	{
+		DrawCall& draw = *RendererCore::FindDrawCall(d.SceneBelongsTo, d.DWBelongsTo);
+		for(int i = 0; i < d.indexVertices.size(); i++)
+		{
+			draw.allVerts[d.indexVertices[i]].position = glm::vec4(0);
+		}
+
+		d.isModelDisabled = true;
+	}
+}
+
+void RendererCore::EnableModel(Model& d)
+{
+	if(d.isModelDisabled)
+	{
+		d.isModelDisabled = false;
+		d.OnChange();
+	}
+}
+
 void RendererCore::UpdateSorting(DrawCall& d)
 {
 	d.updateSorting = true;
@@ -176,6 +202,19 @@ void RendererCore::AddImGUIElement(ImGUIElement& i, DrawCall& d)
 	{
 		d.allImGUI.push_back(&i);
 	}
+}
+
+void RendererCore::AddIGUI(iGUI& i)
+{
+	AddIGUI(i, *SceneManager::MainScene().MainDrawCall());
+}
+
+void RendererCore::AddIGUI(iGUI& i, DrawCall& d)
+{
+	i.ownerDrawId = d.id;
+	i.ownerSceneId = d.sceneId;
+
+	d.alliGUI.push_back(&i);
 }
 
 void RendererCore::SetUp()
@@ -889,20 +928,35 @@ void RendererCore::OpenGL_Render()
 
 				if (d.type == DrawCall::Type::UI)
 				{
-					if (d.start > 2 && d.allImGUI.size() != 0)
+					if (d.start > 2)
 					{
-						//TODO: Make it so it is compatible with OpenGL 2 TOO!
-						ImGui_ImplGlfw_NewFrame();
-						ImGui_ImplOpenGL3_NewFrame();
-						ImGui::NewFrame();
-
-						for (int i = 0; i < d.allImGUI.size(); i++)
+						if(d.allImGUI.size() != 0 || d.alliGUI.size() != 0)
 						{
-							d.allImGUI[i]->OnUpdate();
-						}
+							iGUI::GlobalFrameBegin();
 
-						ImGui::Render();
-						ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+							//TODO: Make it so it is compatible with OpenGL 2 TOO!
+							ImGui_ImplGlfw_NewFrame();
+							ImGui_ImplOpenGL3_NewFrame();
+							ImGui::NewFrame();
+
+							if(d.allImGUI.size() != 0)
+							{
+								for (int i = 0; i < d.allImGUI.size(); i++)
+								{
+									d.allImGUI[i]->OnUpdate();
+								}
+							}
+							else if(d.alliGUI.size() != 0)
+							{
+								for (int i = 0; i < d.alliGUI.size(); i++)
+								{
+									d.alliGUI[i]->OnUpdate();
+								}
+							}
+
+							ImGui::Render();
+							ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData(), &d.imGuiGPU);
+						}
 					}
 				}
 

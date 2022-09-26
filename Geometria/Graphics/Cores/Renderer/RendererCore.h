@@ -2,7 +2,6 @@
 #define RENDERER_CORE_H
 #include <vector>
 
-
 class Model;
 struct Vertex;
 struct Matrix;
@@ -12,6 +11,8 @@ class Scene;
 class DrawCall;
 
 class ImGUIElement;
+
+struct iGUI;
 
 class RendererCore
 {
@@ -36,10 +37,16 @@ public:
 	static void AddModel(Model& m);
 	static void AddModel(Model& m, DrawCall& d);
 
+	static void DisableModel(Model& m);
+	static void EnableModel(Model& m);
+
 	static void UpdateSorting(DrawCall& d);
 
 	static void AddImGUIElement(ImGUIElement& i);
 	static void AddImGUIElement(ImGUIElement& i, DrawCall& d);
+
+	static void AddIGUI(iGUI& i);
+	static void AddIGUI(iGUI& i, DrawCall& d);
 
 	static void SetUp();
 

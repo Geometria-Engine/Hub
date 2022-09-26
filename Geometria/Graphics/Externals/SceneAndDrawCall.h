@@ -1,6 +1,10 @@
-#pragma once
+#ifndef SCENE_AND_DRAW_CALL_H
+#define SCENE_AND_DRAW_CALL_H
+
 #include <vector>
+#include <array>
 #include "ImGUIElement.h"
+#include "DrawCallImGuiGPU.h"
 
 class RendererCore;
 struct Matrix;
@@ -8,6 +12,7 @@ struct ScriptBehaviour;
 struct Vertex;
 class Shader;
 class Model;
+struct iGUI;
 
 class DrawCall : public ScriptBehaviour
 {
@@ -67,12 +72,15 @@ public:
 
 	std::vector<Model*> allModels;
 	std::vector<ImGUIElement*> allImGUI;
+	std::vector<iGUI*> alliGUI;
 	std::vector<Vertex> allVerts;
 	std::vector<uint32_t> allIndices;
 
 	Type type = Type::Dynamic;
 	Sorting sort = Sorting::Update;
 	Mode mode = Mode::To3D;
+
+	ImGui_GPU imGuiGPU;
 
 	enum DepthBuffer
 	{
@@ -168,3 +176,5 @@ public:
 		return _allScenes[_allScenes.size() - 1];
 	}
 };
+
+#endif

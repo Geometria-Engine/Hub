@@ -5,9 +5,9 @@
 #include <GL/glew.h>
 #include <glfw3.h>
 #include <vector>
-#include "../Window/Window.h"
-#include "../Shader/Shader.h"
-#include "../Camera/Camera.h"
+#include "Graphics/Cores/Window/Window.h"
+#include "Graphics/Cores/Shader/Shader.h"
+#include "Graphics/Cores/Camera/Camera.h"
 
 #include "CommonObjects/Empty.h"
 
@@ -50,6 +50,7 @@ public:
 	static void SetWindowTitle(const char* title);
 	static void SetWindowIcon(const char* icon_path);
 	static bool VSync;
+	static float refreshRate;
 
 	static void SetResolution(Vector2 resolution)
 	{
