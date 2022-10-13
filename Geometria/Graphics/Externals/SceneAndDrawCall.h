@@ -4,7 +4,6 @@
 #include <vector>
 #include <array>
 #include "ImGUIElement.h"
-#include "DrawCallImGuiGPU.h"
 
 class RendererCore;
 struct Matrix;
@@ -79,8 +78,6 @@ public:
 	Type type = Type::Dynamic;
 	Sorting sort = Sorting::Update;
 	Mode mode = Mode::To3D;
-
-	ImGui_GPU imGuiGPU;
 
 	enum DepthBuffer
 	{

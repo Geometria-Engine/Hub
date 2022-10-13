@@ -43,15 +43,18 @@ void Debugger::AnalyzeFileContent(std::string file, std::vector<std::string> con
 		{
 			std::string line = content[i];
 
-			if(line.find("{") != std::string::npos)
-				Debugger::bracketDepth++;
-
-			if(line.find("}") != std::string::npos)
+			if(line.find("= {") == std::string::npos)
 			{
-				if(Debugger::bracketDepth == 1)
-					functionEnd = true;
+				if(line.find("{") != std::string::npos)
+					Debugger::bracketDepth++;
 
-				Debugger::bracketDepth--;
+				if(line.find("}") != std::string::npos)
+				{
+					if(Debugger::bracketDepth == 1)
+						functionEnd = true;
+
+					Debugger::bracketDepth--;
+				}
 			}
 
 			if(Debugger::bracketDepth < 0)
@@ -62,7 +65,7 @@ void Debugger::AnalyzeFileContent(std::string file, std::vector<std::string> con
 
 			if(Debugger::bracketDepth == 1)
 			{
-				if(!functionBegin)
+				if(!functionBegin && line.find("if") == std::string::npos)
 				{
 					addTry = true;
 					functionBegin = true;
@@ -77,7 +80,10 @@ void Debugger::AnalyzeFileContent(std::string file, std::vector<std::string> con
 				finalLine = StringAPI::ReplaceAll(finalLine, "\"", "\\\"");
 	
 				if(finalLine.find(";") == std::string::npos)
+				{
 					finalLine = StringAPI::ReplaceAll(finalLine, "\n", "...\n");
+					Debugger::skipCount++;
+				}
 
 				if(finalLine.find("if") != std::string::npos)
 				{
@@ -117,7 +123,6 @@ void Debugger::AnalyzeFileContent(std::string file, std::vector<std::string> con
 			{
 				functionBegin = false;
 				functionEnd = false;
-				addCatch = true;
 			}
 				
 			if(addTry)
@@ -127,16 +132,9 @@ void Debugger::AnalyzeFileContent(std::string file, std::vector<std::string> con
 				tryLine += "_GEO_COMPILER(typedef void (*SignalHandlerPointer)(int);)\n";
 				tryLine += "_GEO_COMPILER(SignalHandlerPointer previousHandler;)\n";
 				tryLine += "_GEO_COMPILER(previousHandler = signal(SIGSEGV , DebugTools::SignalHandler);)\n";
-				tryLine += "_GEO_COMPILER(try {)\n";
 
 				finalFileCont += line + "\n" + tryLine;
 				addTry = false;
-			}
-			else if(addCatch)
-			{
-				std::string catchLine = "_GEO_COMPILER(})\n _GEO_COMPILER(catch(const std::exception& e))\n_GEO_COMPILER({)\n_GEO_COMPILER(std::cout << \"Uh oh!\" << std::endl; exit(1);)\n_GEO_COMPILER(})";
-				finalFileCont += catchLine + "\n" + line + "\n";
-				addCatch = false;
 			}
 			else
 				finalFileCont += line + "\n";

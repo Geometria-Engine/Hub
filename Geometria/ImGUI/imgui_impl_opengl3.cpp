@@ -114,7 +114,6 @@
 #include <GLES3/gl3.h>          // Use GL ES 3
 #endif
 #elif !defined(IMGUI_IMPL_OPENGL_LOADER_CUSTOM)
-
 // Modern desktop OpenGL doesn't have a standard portable header file to load OpenGL function pointers.
 // Helper libraries are often used for this purpose! Here we are using our own minimal custom loader based on gl3w.
 // In the rest of your app/engine, you can use another loader of your choice (gl3w, glew, glad, glbinding, glext, glLoadGen, etc.).
@@ -124,8 +123,6 @@
 // Changes to this backend using new APIs should be accompanied by a regenerated stripped loader version.
 #define IMGL3W_IMPL
 #include "imgui_impl_opengl3_loader.h"
-#include "Graphics/Externals/DrawCallImGuiGPU.h"
-//#include "Graphics/Externals/SceneAndDrawCall.h"
 #endif
 
 // Vertex arrays are not supported on ES2/WebGL1 unless Emscripten which uses an extension
@@ -367,7 +364,7 @@ static void ImGui_ImplOpenGL3_SetupRenderState(ImDrawData* draw_data, int fb_wid
 // OpenGL3 Render function.
 // Note that this implementation is little overcomplicated because we are saving/setting up/restoring every OpenGL state explicitly.
 // This is in order to be able to run within an OpenGL engine that doesn't do so.
-void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data, ImGui_GPU* geo_gpu)
+void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data)
 {
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
     int fb_width = (int)(draw_data->DisplaySize.x * draw_data->FramebufferScale.x);
@@ -378,131 +375,128 @@ void    ImGui_ImplOpenGL3_RenderDrawData(ImDrawData* draw_data, ImGui_GPU* geo_g
     ImGui_ImplOpenGL3_Data* bd = ImGui_ImplOpenGL3_GetBackendData();
 
     // Backup GL state
-    if(geo_gpu != nullptr)
+    GLenum last_active_texture; glGetIntegerv(GL_ACTIVE_TEXTURE, (GLint*)&last_active_texture);
+    glActiveTexture(GL_TEXTURE0);
+    GLuint last_program; glGetIntegerv(GL_CURRENT_PROGRAM, (GLint*)&last_program);
+    GLuint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, (GLint*)&last_texture);
+#ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_BIND_SAMPLER
+    GLuint last_sampler; if (bd->GlVersion >= 330) { glGetIntegerv(GL_SAMPLER_BINDING, (GLint*)&last_sampler); } else { last_sampler = 0; }
+#endif
+    GLuint last_array_buffer; glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*)&last_array_buffer);
+#ifdef IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
+    GLuint last_vertex_array_object; glGetIntegerv(GL_VERTEX_ARRAY_BINDING, (GLint*)&last_vertex_array_object);
+#endif
+#ifdef IMGUI_IMPL_HAS_POLYGON_MODE
+    GLint last_polygon_mode[2]; glGetIntegerv(GL_POLYGON_MODE, last_polygon_mode);
+#endif
+    GLint last_viewport[4]; glGetIntegerv(GL_VIEWPORT, last_viewport);
+    GLint last_scissor_box[4]; glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box);
+    GLenum last_blend_src_rgb; glGetIntegerv(GL_BLEND_SRC_RGB, (GLint*)&last_blend_src_rgb);
+    GLenum last_blend_dst_rgb; glGetIntegerv(GL_BLEND_DST_RGB, (GLint*)&last_blend_dst_rgb);
+    GLenum last_blend_src_alpha; glGetIntegerv(GL_BLEND_SRC_ALPHA, (GLint*)&last_blend_src_alpha);
+    GLenum last_blend_dst_alpha; glGetIntegerv(GL_BLEND_DST_ALPHA, (GLint*)&last_blend_dst_alpha);
+    GLenum last_blend_equation_rgb; glGetIntegerv(GL_BLEND_EQUATION_RGB, (GLint*)&last_blend_equation_rgb);
+    GLenum last_blend_equation_alpha; glGetIntegerv(GL_BLEND_EQUATION_ALPHA, (GLint*)&last_blend_equation_alpha);
+    GLboolean last_enable_blend = glIsEnabled(GL_BLEND);
+    GLboolean last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
+    GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
+    GLboolean last_enable_stencil_test = glIsEnabled(GL_STENCIL_TEST);
+    GLboolean last_enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
+#ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_PRIMITIVE_RESTART
+    GLboolean last_enable_primitive_restart = (bd->GlVersion >= 310) ? glIsEnabled(GL_PRIMITIVE_RESTART) : GL_FALSE;
+#endif
+
+    // Setup desired GL state
+    // Recreate the VAO every time (this is to easily allow multiple GL contexts to be rendered to. VAO are not shared among GL contexts)
+    // The renderer would actually work without any VAO bound, but then our VertexAttrib calls would overwrite the default one currently bound.
+    GLuint vertex_array_object = 0;
+#ifdef IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
+    glGenVertexArrays(1, &vertex_array_object);
+#endif
+    ImGui_ImplOpenGL3_SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
+
+    // Will project scissor/clipping rectangles into framebuffer space
+    ImVec2 clip_off = draw_data->DisplayPos;         // (0,0) unless using multi-viewports
+    ImVec2 clip_scale = draw_data->FramebufferScale; // (1,1) unless using retina display which are often (2,2)
+
+    // Render command lists
+    for (int n = 0; n < draw_data->CmdListsCount; n++)
     {
-        GLenum last_active_texture = geo_gpu->GetActiveTexture();
-        glActiveTexture(GL_TEXTURE0);
-        GLuint last_program = geo_gpu->GetProgram();
-        GLuint last_texture = geo_gpu->GetTexture();
-    #ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_BIND_SAMPLER
-        GLuint last_sampler = geo_gpu->GetSampler(bd->GlVersion);
-    #endif
-        GLuint last_array_buffer = geo_gpu->GetArrayBuffer();
-    #ifdef IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
-        GLuint last_vertex_array_object = geo_gpu->GetVAObject();
-    #endif
-    #ifdef IMGUI_IMPL_HAS_POLYGON_MODE
-        GLint last_polygon_mode[2]; geo_gpu->GetPolygonMode(last_polygon_mode);
-    #endif
-        GLint last_viewport[4]; geo_gpu->GetViewport(last_viewport);
-        GLint last_scissor_box[4]; geo_gpu->GetScissorBox(last_scissor_box);
-        GLenum last_blend_src_rgb = geo_gpu->GetBlendSourceRGB();
-        GLenum last_blend_dst_rgb = geo_gpu->GetBlendDestRGB();
-        GLenum last_blend_src_alpha = geo_gpu->GetBlendSourceAlpha();
-        GLenum last_blend_dst_alpha = geo_gpu->GetBlendDestAlpha();
-        GLenum last_blend_equation_rgb = geo_gpu->GetBlendEquationRGB();
-        GLenum last_blend_equation_alpha = geo_gpu->GetBlendEquationAlpha();
-        //GLboolean last_enable_blend = glIsEnabled(GL_BLEND);
-        //GLboolean last_enable_cull_face = glIsEnabled(GL_CULL_FACE);
-        //GLboolean last_enable_depth_test = glIsEnabled(GL_DEPTH_TEST);
-        //GLboolean last_enable_stencil_test = glIsEnabled(GL_STENCIL_TEST);
-        //GLboolean last_enable_scissor_test = glIsEnabled(GL_SCISSOR_TEST);
-    #ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_PRIMITIVE_RESTART
-        GLboolean last_enable_primitive_restart = (bd->GlVersion >= 310) ? glIsEnabled(GL_PRIMITIVE_RESTART) : GL_FALSE;
-    #endif
-    
-        // Setup desired GL state
-        // Recreate the VAO every time (this is to easily allow multiple GL contexts to be rendered to. VAO are not shared among GL contexts)
-        // The renderer would actually work without any VAO bound, but then our VertexAttrib calls would overwrite the default one currently bound.
-        GLuint vertex_array_object = 0;
-    #ifdef IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
-        glGenVertexArrays(1, &vertex_array_object);
-    #endif
-        ImGui_ImplOpenGL3_SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
-    
-        // Will project scissor/clipping rectangles into framebuffer space
-        ImVec2 clip_off = draw_data->DisplayPos;         // (0,0) unless using multi-viewports
-        ImVec2 clip_scale = draw_data->FramebufferScale; // (1,1) unless using retina display which are often (2,2)
-    
-        // Render command lists
-        for (int n = 0; n < draw_data->CmdListsCount; n++)
+        const ImDrawList* cmd_list = draw_data->CmdLists[n];
+
+        // Upload vertex/index buffers
+        glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)cmd_list->VtxBuffer.Size * (int)sizeof(ImDrawVert), (const GLvoid*)cmd_list->VtxBuffer.Data, GL_STREAM_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)cmd_list->IdxBuffer.Size * (int)sizeof(ImDrawIdx), (const GLvoid*)cmd_list->IdxBuffer.Data, GL_STREAM_DRAW);
+
+        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
-            const ImDrawList* cmd_list = draw_data->CmdLists[n];
-    
-            // Upload vertex/index buffers
-            glBufferData(GL_ARRAY_BUFFER, (GLsizeiptr)cmd_list->VtxBuffer.Size * (int)sizeof(ImDrawVert), (const GLvoid*)cmd_list->VtxBuffer.Data, GL_STREAM_DRAW);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, (GLsizeiptr)cmd_list->IdxBuffer.Size * (int)sizeof(ImDrawIdx), (const GLvoid*)cmd_list->IdxBuffer.Data, GL_STREAM_DRAW);
-    
-            for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+            const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
+            if (pcmd->UserCallback != NULL)
             {
-                const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
-                if (pcmd->UserCallback != NULL)
-                {
-                    // User callback, registered via ImDrawList::AddCallback()
-                    // (ImDrawCallback_ResetRenderState is a special callback value used by the user to request the renderer to reset render state.)
-                    if (pcmd->UserCallback == ImDrawCallback_ResetRenderState)
-                        ImGui_ImplOpenGL3_SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
-                    else
-                        pcmd->UserCallback(cmd_list, pcmd);
-                }
+                // User callback, registered via ImDrawList::AddCallback()
+                // (ImDrawCallback_ResetRenderState is a special callback value used by the user to request the renderer to reset render state.)
+                if (pcmd->UserCallback == ImDrawCallback_ResetRenderState)
+                    ImGui_ImplOpenGL3_SetupRenderState(draw_data, fb_width, fb_height, vertex_array_object);
                 else
-                {
-                    // Project scissor/clipping rectangles into framebuffer space
-                    ImVec2 clip_min((pcmd->ClipRect.x - clip_off.x) * clip_scale.x, (pcmd->ClipRect.y - clip_off.y) * clip_scale.y);
-                    ImVec2 clip_max((pcmd->ClipRect.z - clip_off.x) * clip_scale.x, (pcmd->ClipRect.w - clip_off.y) * clip_scale.y);
-                    if (clip_max.x < clip_min.x || clip_max.y < clip_min.y)
-                        continue;
-    
-                    // Apply scissor/clipping rectangle (Y is inverted in OpenGL)
-                    glScissor((int)clip_min.x, (int)(fb_height - clip_max.y), (int)(clip_max.x - clip_min.x), (int)(clip_max.y - clip_min.y));
-    
-                    // Bind texture, Draw
-                    glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->GetTexID());
-    #ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_VTX_OFFSET
-                    if (bd->GlVersion >= 320)
-                        glDrawElementsBaseVertex(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void*)(intptr_t)(pcmd->IdxOffset * sizeof(ImDrawIdx)), (GLint)pcmd->VtxOffset);
-                    else
-    #endif
-                    glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void*)(intptr_t)(pcmd->IdxOffset * sizeof(ImDrawIdx)));
-                }
+                    pcmd->UserCallback(cmd_list, pcmd);
+            }
+            else
+            {
+                // Project scissor/clipping rectangles into framebuffer space
+                ImVec2 clip_min((pcmd->ClipRect.x - clip_off.x) * clip_scale.x, (pcmd->ClipRect.y - clip_off.y) * clip_scale.y);
+                ImVec2 clip_max((pcmd->ClipRect.z - clip_off.x) * clip_scale.x, (pcmd->ClipRect.w - clip_off.y) * clip_scale.y);
+                if (clip_max.x < clip_min.x || clip_max.y < clip_min.y)
+                    continue;
+
+                // Apply scissor/clipping rectangle (Y is inverted in OpenGL)
+                glScissor((int)clip_min.x, (int)(fb_height - clip_max.y), (int)(clip_max.x - clip_min.x), (int)(clip_max.y - clip_min.y));
+
+                // Bind texture, Draw
+                glBindTexture(GL_TEXTURE_2D, (GLuint)(intptr_t)pcmd->GetTexID());
+#ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_VTX_OFFSET
+                if (bd->GlVersion >= 320)
+                    glDrawElementsBaseVertex(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void*)(intptr_t)(pcmd->IdxOffset * sizeof(ImDrawIdx)), (GLint)pcmd->VtxOffset);
+                else
+#endif
+                glDrawElements(GL_TRIANGLES, (GLsizei)pcmd->ElemCount, sizeof(ImDrawIdx) == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT, (void*)(intptr_t)(pcmd->IdxOffset * sizeof(ImDrawIdx)));
             }
         }
-    
-        // Destroy the temporary VAO
-    #ifdef IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
-        glDeleteVertexArrays(1, &vertex_array_object);
-    #endif
-    
-        // Restore modified GL state
-        glUseProgram(last_program);
-        glBindTexture(GL_TEXTURE_2D, last_texture);
-    #ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_BIND_SAMPLER
-        if (bd->GlVersion >= 330)
-            glBindSampler(0, last_sampler);
-    #endif
-        glActiveTexture(last_active_texture);
-    #ifdef IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
-        glBindVertexArray(last_vertex_array_object);
-    #endif
-        glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
-        glBlendEquationSeparate(last_blend_equation_rgb, last_blend_equation_alpha);
-        glBlendFuncSeparate(last_blend_src_rgb, last_blend_dst_rgb, last_blend_src_alpha, last_blend_dst_alpha);
-        //if (last_enable_blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
-        //if (last_enable_cull_face) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
-        //if (last_enable_depth_test) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
-        //if (last_enable_stencil_test) glEnable(GL_STENCIL_TEST); else glDisable(GL_STENCIL_TEST);
-        //if (last_enable_scissor_test) glEnable(GL_SCISSOR_TEST); else glDisable(GL_SCISSOR_TEST);
-    #ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_PRIMITIVE_RESTART
-        if (bd->GlVersion >= 310) { if (last_enable_primitive_restart) glEnable(GL_PRIMITIVE_RESTART); else glDisable(GL_PRIMITIVE_RESTART); }
-    #endif
-    
-    #ifdef IMGUI_IMPL_HAS_POLYGON_MODE
-        glPolygonMode(GL_FRONT_AND_BACK, (GLenum)last_polygon_mode[0]);
-    #endif
-        glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
-        glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
-        (void)bd; // Not all compilation paths use this
     }
+
+    // Destroy the temporary VAO
+#ifdef IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
+    glDeleteVertexArrays(1, &vertex_array_object);
+#endif
+
+    // Restore modified GL state
+    glUseProgram(last_program);
+    glBindTexture(GL_TEXTURE_2D, last_texture);
+#ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_BIND_SAMPLER
+    if (bd->GlVersion >= 330)
+        glBindSampler(0, last_sampler);
+#endif
+    glActiveTexture(last_active_texture);
+#ifdef IMGUI_IMPL_OPENGL_USE_VERTEX_ARRAY
+    glBindVertexArray(last_vertex_array_object);
+#endif
+    glBindBuffer(GL_ARRAY_BUFFER, last_array_buffer);
+    glBlendEquationSeparate(last_blend_equation_rgb, last_blend_equation_alpha);
+    glBlendFuncSeparate(last_blend_src_rgb, last_blend_dst_rgb, last_blend_src_alpha, last_blend_dst_alpha);
+    if (last_enable_blend) glEnable(GL_BLEND); else glDisable(GL_BLEND);
+    if (last_enable_cull_face) glEnable(GL_CULL_FACE); else glDisable(GL_CULL_FACE);
+    if (last_enable_depth_test) glEnable(GL_DEPTH_TEST); else glDisable(GL_DEPTH_TEST);
+    if (last_enable_stencil_test) glEnable(GL_STENCIL_TEST); else glDisable(GL_STENCIL_TEST);
+    if (last_enable_scissor_test) glEnable(GL_SCISSOR_TEST); else glDisable(GL_SCISSOR_TEST);
+#ifdef IMGUI_IMPL_OPENGL_MAY_HAVE_PRIMITIVE_RESTART
+    if (bd->GlVersion >= 310) { if (last_enable_primitive_restart) glEnable(GL_PRIMITIVE_RESTART); else glDisable(GL_PRIMITIVE_RESTART); }
+#endif
+
+#ifdef IMGUI_IMPL_HAS_POLYGON_MODE
+    glPolygonMode(GL_FRONT_AND_BACK, (GLenum)last_polygon_mode[0]);
+#endif
+    glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
+    glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
+    (void)bd; // Not all compilation paths use this
 }
 
 bool ImGui_ImplOpenGL3_CreateFontsTexture()
