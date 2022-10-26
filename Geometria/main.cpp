@@ -10,6 +10,8 @@
 #include "Game/Scripts/ToolkitUpdater.h"
 #include "Game/Scripts/FirstTimeInstaller.h"
 #include "Game/Scripts/Debugger/Debugger.h"
+#include "Game/Scripts/MainConsole/MainConsole.h"
+#include "Game/Scripts/GeoMenus/GeoMenus.h"
 
 DONT_UPDATE_FILE()
 
@@ -84,6 +86,8 @@ void Main_Compile(std::string variable)
 
 int main(int argc, char** argv)
 {
+    GeoMenus::LoadAllGeoMenus();
+
     if(argc != 0)
     {
         if(std::experimental::filesystem::exists("geo.exe.old"))
@@ -186,17 +190,80 @@ int main(int argc, char** argv)
         else if(commandLine == "--version")
         {
             std::cout << "0.2.5" << std::endl;
+            exit(0);
         }
         else if(commandLine == "--macro-test")
         {
             //ToolkitUpdater::InstallNewToolkit("hello :D");
             exit(0);
         }
+        else if(commandLine == "--geomenu")
+        {
+            if(i + 1 < argc)
+            {
+                std::string firstParam = argv[i + 1];
+                if(firstParam == "run-with-privileges")
+                {
+                    if(i + 2 >= argc)
+                    {
+                        GeoMenus::Run("", true, "");
+                    }
+                    else if(i + 2 < argc)
+                    {
+                        if(i + 3 < argc)
+                            GeoMenus::Run(argv[i + 2], true, argv[i + 3]);
+                        else if(i + 3 >= argc)
+                            GeoMenus::Run(argv[i + 2], true, "");
+                    }
+                }
+                else
+                {
+                    if(i + 2 < argc)
+                        GeoMenus::Run(firstParam, false, argv[i + 2]);
+                    else if(i + 2 >= argc)
+                        GeoMenus::Run(firstParam, false, "");
+                }  
+            }
+            else
+            {
+                GeoMenus::Run("", false, "");
+            }
+
+            exit(0);
+        }
+        else if(commandLine == "--create-package")
+        {
+            if(i + 1 < argc)
+            {
+                std::string cmd = argv[i + 1];
+                GeoMenus::CreatePackage(cmd);
+            }
+
+            exit(0);
+        }
+        else
+        {
+            for(auto geoMenuCmd : GeoMenus::savedCmds)
+            {
+                if(commandLine == geoMenuCmd.second)
+                {
+                    if(i + 1 < argc)
+                        GeoMenus::Run(geoMenuCmd.first, true, argv[i + 1]);
+                    else if(i + 1 >= argc)
+                        GeoMenus::Run(geoMenuCmd.first, false, "");
+
+                    exit(0);
+                }
+            }
+        }
     }
 
     std::string gamefolder = std::experimental::filesystem::current_path().u8string() + "/Game";
     if(!Files::DirectoryExists(gamefolder.c_str()))
+    {
+        MainConsole::Start();
         exit(0);
+    }
 
     if(!std::experimental::filesystem::exists("firsttime"))
     {

@@ -12,6 +12,8 @@
 
 #include "iStyle/iStyle.h"
 
+#define BeginTree(x) TreeCreated(); x
+
 struct iGUI : public ScriptBehaviour
 {
 	int ownerSceneId;
@@ -39,6 +41,11 @@ struct iGUI : public ScriptBehaviour
 
 	static void GlobalFrameBegin();
 	static void GlobalFrameEnd();
+
+	void TreeCreated()
+	{
+		int yo = 0;
+	}
 
 	void RenderImage(Texture& tex, ImDrawList* drawList, ImVec2 pos, ImVec2 size, Color col);
 };
